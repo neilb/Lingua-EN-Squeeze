@@ -1,6 +1,6 @@
+INSTALL
 README
-ChangeLog
-MANIFEST
 Makefile.PL
+MANIFEST                        This list of files
+META.yml
 Squeeze.pm
-test.pl

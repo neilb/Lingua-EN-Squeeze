@@ -1,0 +1,14 @@
+How to build this distribution
+
+        To install this module, make sure you are in the directory where
+        this README file is in and type:
+
+            perl Makefile.PL        # to build the Makefile
+            make install            # to install the module
+
+        After installation, you should be able to "man
+        Lingua::EN::Squeeze" which will get you to usage information for
+        the module. Alternative, if that does not work, user Perl command
+        "perldoc Lingua::EN:Squeeze"
+
+End

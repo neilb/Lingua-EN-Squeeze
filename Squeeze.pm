@@ -1,28 +1,43 @@
-# @(#) Squeez.pm - Perl package to Shorten text to minimum syllables
-# @(#) $Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $
+# Squeez.pm - Perl package to shorten text to minimum syllables
+# $Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $
 #
-#	This file is maintaned by using Emacs and packages
+# This file is maintaned by using Emacs (The Editor) and add-on
+# packages. See http://tiny-tools.sourceforge.net/
 #
-#	    tinytab.el	-- 4 tab movement mode
-#	    tinyperl	-- Perl helper mode (pod docs, stubs etc)
-#	    tinybm.el	-- those drawn &TAG lines and breaks you see
+#   tinytab.el -- indent mode
+#   tinyperl     -- Perl helper mode (pod docs, stubs etc)
+#   tinybm.el    -- those drawn &TAG lines and breaks you see
 #
+# To generate HTML
+#
+#   $ perl -e 'use Pod::Html qw(pod2html); pod2html shift @ARGV' FILE.pm
+#
+# To make a CPAN package:
+#
+#   $ mkdir -p Lingua-EN-Squeeze-YYYY.MMDD
+#   $ cp Squeeze.pm Makefile.PL INSTALL Lingua-EN-Squeeze-YYYY.MMDD
+#   $ cp Makefile.PL Lingua-EN-Squeeze-YYYY.MMDD
+#   $ tar zvcf Lingua-EN-Squeeze-YYYY.MMDD.tar.gz Lingua-EN-Squeeze-YYYY.MMDD/
+#
+# The last step can be done with:
+#
+#   $ make dist
 
 package Lingua::EN::Squeeze;
 
-my $LIB = "Lingua::EN::Squeeze";	# For function debug
+my $LIB = "Lingua::EN::Squeeze";        # For debug printing
 
 
     use vars qw ( $VERSION );
 
-    #	This is for use of Makefile.PL and ExtUtils::MakeMaker
-    #	So that it puts the tardist number in format YYYY.MMDD
-    #	The REAL version number is defined later
+    #   This is for use of Makefile.PL and ExtUtils::MakeMaker
+    #   So that it puts the tardist number in format YYYY.MMDD
+    #   The REAL version number is defined later
 
-    #	The following variable is updated by my Emacs setup whenever
-    #	this file is saved
+    #   The following variable is updated by Emacs setup tinyperl.el
+    #   whenever this file is saved
 
-    $VERSION = '1998.1204';
+    $VERSION = '2003.1003';
 
 # ***********************************************************************
 #
@@ -34,46 +49,43 @@ my $LIB = "Lingua::EN::Squeeze";	# For function debug
 
 =head1 NAME
 
-Squeeze.pm - Shorten text to minimum syllables by using hash table and
-vowel deletion
+Squeeze.pm - Shorten text to minimum syllables by using hash table lookup and vowel deletion
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $
+$Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $
 
 =head1 SYNOPSIS
 
-    use Squeeze.pm;	    # imnport only function
+    use Squeeze.pm;         # import only function
     use Squeeze qw( :ALL ); # import all functions and variables
-    use English;
+    use English;            # to use readable variable names
 
     while (<>)
     {
-	print SqueezeText $ARG;
+        print "Original: $ARG\n";
+        print "Squeezed: ", SqueezeText lc $ARG;
     }
 
 =head1 DESCRIPTION
 
-Squeeze English text to most compact format possibly so that it is barely
-readable. You should convert all text to lowercase for maximum compression,
-because optimizations have been designed mostly fr uncapitalised letters.
-
-=over 4
+Squeeze English text to most compact format possible so that it is barely
+readable. Be sure to convert all text to lowercase before using the
+SqueezeText() for maximum compression, because optimizations have been
+designed mostly for uncapitalized letters.
 
 C<Warning: Each line is processed multiple times, so prepare for slow
 conversion time>
 
-=back
-
 You can use this module e.g. to preprocess text before it is sent to
 electronic media that has some maximum text size limit. For example pagers
-have an arbitrary text size limit, typically 200 characters, which you want
-to fill as much as possible. Alternatively you may have GSM cellular phone
-which is capable of receiving Short Messages (SMS), whose message size
-limit is 160 characters. For demonstration of this module's SqueezeText()
-function , the description text of this paragraph has been converted below.
-See yourself if it's readable (Yes, it takes some time to get used to). The
-compress ratio is typically 30-40%
+have an arbitrary text size limit, typically around 200 characters, which
+you want to fill as much as possible. Alternatively you may have GSM
+cellular phone which is capable of receiving Short Messages (SMS), whose
+message size limit is 160 characters. For demonstration of this module's
+SqueezeText() function, this paragraph's conversion result is presented
+below. See yourself if it's readable (Yes, it takes some time to get used
+to). The compression ratio is typically 30-40%
 
     u _n use thi mod e.g. to prprce txt bfre i_s snt to
     elrnic mda has som max txt siz lim. f_xmple pag
@@ -100,22 +112,23 @@ And if $SQZ_OPTIMIZE_LEVEL is set to non-zero
 The comparision of these two show
 
     Original text   : 627 characters
-    Level 0	    : 433 characters	reduction 31 %
-    Level 1	    : 345 characters	reduction 45 %	(+14 improvement)
+    Level 0         : 433 characters    reduction 31 %
+    Level 1         : 345 characters    reduction 45 %  (+14% improvement)
 
 There are few grammar rules which are used to shorten some English
-tokens very much:
+tokens considerably:
 
     Word that has _ is usually a verb
 
     Word that has / is usually a substantive, noun,
-		    pronomine or other non-verb
+                    pronomine or other non-verb
 
-For example, these tokens must be understood before text can be read. This
-is not yet like Geek code, because you don't need external parser to
-understand this, but just some common sense and time to adapt yourself to
-this text. I<For a complete up to date list, you have to peek the source
-code>
+Read following substituting tokens in order to understand the basics of
+converted text. Hopefully, the text is not pure Geek code (tm) to you after
+some practice. In Geek code (Like G++L--J) you would need an external
+parser to understand it. Here some common sense and time is needed to adapt
+oneself to the compressed format. I<For a complete up to date list, you
+would be better off peeking the source code>
 
     automatically => 'acly_'
 
@@ -157,7 +170,6 @@ code>
     which         => W/
     whose         => WS/
 
-
 Time is expressed with big letters
 
     time          => T
@@ -168,14 +180,15 @@ Time is expressed with big letters
     month         => MM
     year          => YY
 
-Other Big letter acronyms
+Other big letter acronyms, think 8 to represent the speaker and the
+microphone.
 
-    phone	  => P8
+    phone         => P8
 
 =head1 EXAMPLES
 
-To add new words e.g. to word conversion hash table, you'd define your
-custom set and merge them to existing ones. Do similarly to
+To add new words e.g. to word conversion hash table, you'd define a custom
+set and merge them to existing ones. Do similarly to
 C<%SQZ_WXLATE_MULTI_HASH> and C<$SQZ_ZAP_REGEXP> and then start using the
 conversion function.
 
@@ -184,44 +197,44 @@ conversion function.
 
     my %myExtraWordHash =
     (
-	  new-word1  => 'conversion1'
-	, new-word2  => 'conversion2'
-	, new-word3  => 'conversion3'
-	, new-word4  => 'conversion4'
+          new-word1  => 'conversion1'
+        , new-word2  => 'conversion2'
+        , new-word3  => 'conversion3'
+        , new-word4  => 'conversion4'
     );
 
-    #	First take the existing tables and merge them with my
-    #	translation table
+    #   First take the existing tables and merge them with the above
+    #   translation table
 
     my %mySustomWordHash =
     (
-	  %SQZ_WXLATE_HASH
-	, %SQZ_WXLATE_EXTRA_HASH
-	, %myExtraWordHash
+          %SQZ_WXLATE_HASH
+        , %SQZ_WXLATE_EXTRA_HASH
+        , %myExtraWordHash
     );
 
-    my $myXlat = 0;				# state flag
+    my $myXlat = 0;                             # state flag
 
     while (<>)
     {
-	if ( $condition )
-	{
-	    SqueezeHashSet \%mySustomWordHash;	# Use MY conversions
-	    $myXlat = 1;
-	}
+        if ( $condition )
+        {
+            SqueezeHashSet \%mySustomWordHash;  # Use MY conversions
+            $myXlat = 1;
+        }
 
-	if ( $myXlat and $condition )
-	{
-	    SqueezeHashSet "reset";		# Back to default table
-	    $myXlat = 0;
-	}
+        if ( $myXlat and $condition )
+        {
+            SqueezeHashSet "reset";             # Back to default table
+            $myXlat = 0;
+        }
 
-	print SqueezeText $ARG;
+        print SqueezeText $ARG;
     }
 
-Similarly you can redefine the multi word translate table by supplying
+Similarly you can redefine the multi word translation table by supplying
 another hash reference in call to SqueezeHashSet(). To kill more text
-immediately in addtion to default, just concatenate the regexps to
+immediately in addition to default, just concatenate regexps to variable
 I<$SQZ_ZAP_REGEXP>
 
 =head1 KNOWN BUGS
@@ -234,34 +247,31 @@ e.g. for word I<Messages>:
     use English;
     use Lingua::EN:Squeeze;
 
-    #	activate debug when case-insensitive worj "Messages" is found from the
-    #	line.
+    #   Activate debug when case-insensitive word "Messages" is found from
+    #   the line.
 
     SqueezeDebug( 1, '(?i)Messages' );
 
     $ARG = "This line has some Messages in it";
     print SqueezeText $ARG;
 
-
 =head1 EXPORTABLE VARIABLES
 
-The defaults may not conquer all possible text, so you may wish to
-extend the hash tables and I<$SQZ_ZAP_REGEXP> to cope with your typical text.
-
-=over 4
+The defaults may not apply to all types of text, so you may wish to extend
+the hash tables and I<$SQZ_ZAP_REGEXP> to cope with your typical text.
 
 =head2 $SQZ_ZAP_REGEXP
 
 Text to kill immediately, like "Hm, Hi, Hello..." You can only set this
 once, because this regexp is compiled immediately when C<SqueezeText()> is
-caller for the first time.
+called for the first time.
 
 =head2 $SQZ_OPTIMIZE_LEVEL
 
-This controls how optimized the text will be. Curretly there is only
-levels 0 (default) and level 1, which squeezes out all spaces. This
-improves compression by average of 10%, but the text is more harder to
-read. If space is tight, use this extended compression optimization.
+This controls how optimized the text will be. Currently there is only level
+0 (default) and level 1. Level 1 removes all spaces. That usually improves
+compression by average of 10%, but the text is more harder to read. If
+space is real tight, use this extended compression optimization.
 
 =head2 %SQZ_WXLATE_MULTI_HASH
 
@@ -274,9 +284,7 @@ after C<%SQZ_WXLATE_MULTI_HASH> has been used.
 
 =head2 %SQZ_WXLATE_EXTRA_HASH
 
-Aggressive I<Single Word> conversions like: without => w/o. Applied last.
-
-=back
+Aggressive I<Single Word> conversions like: without => w/o are applied last.
 
 =cut
 
@@ -307,37 +315,41 @@ BEGIN
 
     use vars qw
     (
-	@ISA
-	@EXPORT
-	@EXPORT_OK
-	%EXPORT_TAGS
+        @ISA
+        @EXPORT
+        @EXPORT_OK
+        %EXPORT_TAGS
 
-	$FILE_ID
+        $FILE_ID
 
-	$debug
-	$debugRegexp
+        $debug
+        $debugRegexp
 
-	$SQZ_ZAP_REGEXP
-	$SQZ_OPTIMIZE_LEVEL
+        $SQZ_ZAP_REGEXP
+        $SQZ_OPTIMIZE_LEVEL
 
-	%SQZ_WXLATE_HASH
-	%SQZ_WXLATE_EXTRA_HASH
-	%SQZ_WXLATE_MULTI_HASH
+        %SQZ_WXLATE_HASH
+        %SQZ_WXLATE_EXTRA_HASH
+        %SQZ_WXLATE_MULTI_HASH
     );
 
     $FILE_ID =
-	q$Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $;
+        q$Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $;
 
-    #	Here is the real version number, which you use like this:
+    #   Here woudl be the real version number, which you use like this:
     #
-    #	    use Squeeze 1.34;
+    #       use Squeeze 1.34;
     #
     #   Derive version number, the index is 1 if matches
     #   Clearcase @@ in file_id string. index is 2 if this was
     #   RCS identifier.
 
     my $ver = (split ' ', $FILE_ID)[$FILE_ID =~ /@@/ ? 1 : 2];
-    $VERSION = sprintf "%d.%02d",  $ver =~ /(\d+)\.(\d+)/;
+
+    #   Commented out. Better to use the date based version number,
+    #   because it is more informative
+    #
+    #   $VERSION = sprintf "%d.%02d",  $ver =~ /(\d+)\.(\d+)/;
 
     # ...................................................... &export ...
 
@@ -347,26 +359,26 @@ BEGIN
 
     @EXPORT      = qw
     (
-	&SqueezeText
-	&SqueezeControl
-	&SqueezeDebug
+        &SqueezeText
+        &SqueezeControl
+        &SqueezeDebug
     );
 
     @EXPORT_OK   = qw
     (
-	&SqueezeHashSet
+        &SqueezeHashSet
 
-	$SQZ_ZAP_REGEXP
-	$SQZ_OPTIMIZE_LEVEL
+        $SQZ_ZAP_REGEXP
+        $SQZ_OPTIMIZE_LEVEL
 
-	%SQZ_WXLATE_HASH
-	%SQZ_WXLATE_EXTRA_HASH
-	%SQZ_WXLATE_MULTI_HASH
+        %SQZ_WXLATE_HASH
+        %SQZ_WXLATE_EXTRA_HASH
+        %SQZ_WXLATE_MULTI_HASH
     );
 
     %EXPORT_TAGS =
     (
-	ALL => [ @EXPORT_OK, @EXPORT ]
+        ALL => [ @EXPORT_OK, @EXPORT ]
     );
 
 }
@@ -378,18 +390,18 @@ BEGIN
 #
 # **********************************************************************
 
-$debug		= 0;
-$debugRegexp	= '(?i)DummyJummy';
+$debug          = 0;
+$debugRegexp    = '(?i)DummyJummy';
 
 $SQZ_ZAP_REGEXP =
-	'\b(a|an|the|shall|hi|hello|cheers|that)\b'
+        '\b(a|an|the|shall|hi|hello|cheers|that)\b'
     .   '|Thanks (in advance)?|thank you|well'
-    .	'|N\.B\.|\beg.|\btia\b'
-    .	'|\bHi,?\b|\bHm+,?\b'
-    .	'|!'
-    .	'|wrote:|writes:'
+    .   '|N\.B\.|\beg.|\btia\b'
+    .   '|\bHi,?\b|\bHm+,?\b'
+    .   '|!'
+    .   '|wrote:|writes:'
 
-    #	Finnish greetings
+    #   Finnish greetings
 
     .   '|\b(Terve|Moi|Hei|Huomenta)\b'
 
@@ -401,152 +413,152 @@ $SQZ_OPTIMIZE_LEVEL = 0;
 #   A special mnemonic is signified by postfixing it with either
 #   of these characters:
 #
-#	/	prononym, noun
-#	_	verb
+#       /       prononym, noun
+#       _       verb
 
 %SQZ_WXLATE_HASH =
 (
-      above	    => 'abve'
-    , address	    => 'addr'
-    , adjust	    => 'adj'
-    , adjusted	    => 'ajusd'
+      above         => 'abve'
+    , address       => 'addr'
+    , adjust        => 'adj'
+    , adjusted      => 'ajusd'
     , adjustable    => 'ajutbl'
-    , arbitrary	    => 'abitry'
-    , argument	    => 'arg'
+    , arbitrary     => 'abitry'
+    , argument      => 'arg'
 
     , backgreound   => 'bg'
-    , below	    => 'blow'
+    , below         => 'blow'
 
-    , change	    => 'chg'
+    , change        => 'chg'
     , character     => 'chr'
-    , control	    => 'ctl'
-    , command	    => 'cmd'
-    , compact	    => 'cpact'
-    , convert	    => 'cnv_'
-    , converted	    => 'cnvd_'
+    , control       => 'ctl'
+    , command       => 'cmd'
+    , compact       => 'cpact'
+    , convert       => 'cnv_'
+    , converted     => 'cnvd_'
     , conversion    => 'cnv'
     , cooperation   => 'c-o'
-    , correct	    => 'corr'
-    , correlate	    => 'corrl'
-    , create	    => 'creat'
+    , correct       => 'corr'
+    , correlate     => 'corrl'
+    , create        => 'creat'
 
     , database      => 'db'
     , day           => 'DD'
-    , date	    => 'DD'
+    , date          => 'DD'
     , definition    => 'defn'
     , description   => 'desc'
-    , different	    => 'dif'
+    , different     => 'dif'
     , differently   => 'difly'
     , directory     => 'dir'
     , documentation => 'doc'
-    , document	    => 'doc/'
+    , document      => 'doc/'
 
-    , 'each'	    => 'ech'
+    , 'each'        => 'ech'
     , electronic    => 'elrnic'
     , electric      => 'elric'
-    , enable	    => 'enbl'
-    , english	    => 'eng'
+    , enable        => 'enbl'
+    , english       => 'eng'
     , environment   => 'env'
     , everytime     => 'when'
-    , example	    => 'xmple'
-    , expire	    => 'xpre'
-    , expect	    => 'exp'
-    , extend	    => 'extd'
+    , example       => 'xmple'
+    , expire        => 'xpre'
+    , expect        => 'exp'
+    , extend        => 'extd'
 
     , field         => 'fld'
     , following     => 'fwng'
     , 'for'         => '4'
-    , 'format'	    => 'fmt'
+    , 'format'      => 'fmt'
     , forward       => 'fwd'
-    , function	    => 'func'
+    , function      => 'func'
 
     , gateway       => 'gtw'
     , generated     => 'gntd'
 
-    , have	    => 'hv'
+    , have          => 'hv'
     , herself       => 'hself'
     , himself       => 'hself'
-    , hour	    => 'HH'
+    , hour          => 'HH'
 
     , identifier    => 'id'
     , information   => 'inf'
-    , inform	    => 'ifrm'
-    , increase	    => 'inc'
+    , inform        => 'ifrm'
+    , increase      => 'inc'
     , installed     => 'ins'
 
-    , level	    => 'lev'
-    , limit	    => 'lim'
-    , limiting	    => 'limg'
+    , level         => 'lev'
+    , limit         => 'lim'
+    , limiting      => 'limg'
     , located       => 'loctd'
-    , lowercase	    => 'lc'
+    , lowercase     => 'lc'
 
     , managed       => 'mged'
-    , megabyte	    => 'meg'
-    , maximum	    => 'max'
+    , megabyte      => 'meg'
+    , maximum       => 'max'
     , member        => 'mbr'
     , message       => 'msg'
-    , minute	    => 'MIN'
-    , minimum	    => 'min'
-    , module	    => 'mod'
+    , minute        => 'MIN'
+    , minimum       => 'min'
+    , module        => 'mod'
     , month         => 'MM'
 
 
-    , 'name'	    => 'nam'
-    , 'number'	    => 'nbr'
+    , 'name'        => 'nam'
+    , 'number'      => 'nbr'
 
-    , okay	    => 'ok'
-    , 'other'	    => 'otr'
-    , 'others'	    => 'otr'
+    , okay          => 'ok'
+    , 'other'       => 'otr'
+    , 'others'      => 'otr'
 
     , 'package'     => 'pkg'
-    , page	    => 'pg'
-    , parameter	    => 'param'
-    , password	    => 'pwd'
-    , pointer	    => 'ptr'
-    , public	    => 'pub'
-    , private	    => 'priv'
+    , page          => 'pg'
+    , parameter     => 'param'
+    , password      => 'pwd'
+    , pointer       => 'ptr'
+    , public        => 'pub'
+    , private       => 'priv'
     , problem       => 'prb'
-    , process	    => 'proc'
+    , process       => 'proc'
     , project       => 'prj'
 
-    , recipient	    => 'rcpt'	    # this is SMTP acronym
-    , released	    => 'relsd'
-    , reserve	    => 'rsv'
+    , recipient     => 'rcpt'       # this is SMTP acronym
+    , released      => 'relsd'
+    , reserve       => 'rsv'
     , register      => 'reg'
     , resource      => 'rc'
-    , return	    => 'ret'
-    , returned	    => 'ret'
-    , 'require'	    => 'rq'
+    , return        => 'ret'
+    , returned      => 'ret'
+    , 'require'     => 'rq'
 
-    , subject	    => 'sbj'
-    , soconds	    => 'SEC'
+    , subject       => 'sbj'
+    , soconds       => 'SEC'
     , service       => 'srv'
-    , squeeze	    => 'sqz'
+    , squeeze       => 'sqz'
     , something     => 'stng'
     , sometimes     => 'stims'
-    , status	    => 'stat'
-    , still	    => 'stil'
+    , status        => 'stat'
+    , still         => 'stil'
     , straightforward => 'sfwd'
-    , submit	    => 'sbmit'
+    , submit        => 'sbmit'
     , submitting    => 'sbmtng'
-    , symbol	    => 'sym'
-    , 'system'	    => 'sytm'
+    , symbol        => 'sym'
+    , 'system'      => 'sytm'
 
     , 'time'        => 'T'
     , translate     => 'tras'
 
     , understand    => 'untnd'
-    , uppercase	    => 'uc'
-    , usually	    => 'usual'
+    , uppercase     => 'uc'
+    , usually       => 'usual'
 
     , year          => 'YY'
     , you           => 'u'
     , your          => 'u/'
     , yourself      => 'uself'
 
-    , 'version'	    => 'ver'
+    , 'version'     => 'ver'
 
-    , warning	    => 'warng'
+    , warning       => 'warng'
     , with          => 'w/'
     , work          => 'wrk'
 
@@ -554,45 +566,45 @@ $SQZ_OPTIMIZE_LEVEL = 0;
 
 %SQZ_WXLATE_EXTRA_HASH =
 (
-      anything	    => 'atng'
+      anything      => 'atng'
     , automatically => 'acly_'
 
-    , can	    => '_n'
+    , can           => '_n'
 
-    , does	    => '_s'
-    , dont	    => '_nt'
-    , "don't"	    => '_nt'
-    , 'exists'	    => 'ex_'
+    , does          => '_s'
+    , dont          => '_nt'
+    , "don't"       => '_nt'
+    , 'exists'      => 'ex_'
 
     , everything    => 'etng/'
 
-    , however	    => 'h/ver'
+    , however       => 'h/ver'
 
-    , increment	    => 'inc/'
+    , increment     => 'inc/'
     , interesting   => 'inrsg'
-    , interrupt	    => 'irup'
+    , interrupt     => 'irup'
 
-    #	 not spelled like 'less', because plural substitution seens
-    #	 this first 'less' -> 'les'
+    #    not spelled like 'less', because plural substitution seens
+    #    this first 'less' -> 'les'
 
-    , 'les'	    => '-/'
+    , 'les'         => '-/'
 
-    , 'more'	    => '+/'
-    , most	    => '++'
+    , 'more'        => '+/'
+    , most          => '++'
 
-    , phone	    => 'P8'
-    , please	    => 'pls_'
-    , person	    => 'per/'
+    , phone         => 'P8'
+    , please        => 'pls_'
+    , person        => 'per/'
 
     , should        => 's/d'
     , they          => 't/'
     , their         => 't/r'
-    , think	    => 'thk_'
-    , 'which'	    => 'W/'
+    , think         => 'thk_'
+    , 'which'       => 'W/'
     , without       => 'w/o'
-    , whose	    => 'WS/'
-    , will	    => '/w'
-    , would	    => '/d'
+    , whose         => 'WS/'
+    , will          => '/w'
+    , would         => '/d'
 
     , "you'd"       => 'u/d'
     , "you'll"      => 'u/l'
@@ -603,10 +615,10 @@ $SQZ_OPTIMIZE_LEVEL = 0;
 
 %SQZ_WXLATE_MULTI_HASH =
 (
-      'for me'	    => '4m'
-    , 'for you'	    => '4u'
-    , 'for him'	    => '4h'
-    , 'for her'	    => '4h'
+      'for me'      => '4m'
+    , 'for you'     => '4u'
+    , 'for him'     => '4h'
+    , 'for her'     => '4h'
     , 'for them'    => '4t'
     , 'for those'   => '4t'
 
@@ -615,54 +627,54 @@ $SQZ_OPTIMIZE_LEVEL = 0;
     , 'with or without' => 'w/o'
 
 
-    , 'it is'	    => 'i_s'
-    , "it's"	    => 'i_s'
+    , 'it is'       => 'i_s'
+    , "it's"        => 'i_s'
 
-    , 'that is'	    => 't_s'
-    , "that's"	    => 't_s'
+    , 'that is'     => 't_s'
+    , "that's"      => 't_s'
     , "that don't"  => 't_nt'
 
     , 'which is'    => 'w_s'
     , "which's"     => 'w_s'
     , "which don't" => 'w_nt'
 
-    , 'that are'	=> 't_r'
-    , "that're"		=> 't_r'
-    , "that are not"	=> 't_rt'
+    , 'that are'        => 't_r'
+    , "that're"         => 't_r'
+    , "that are not"    => 't_rt'
 
-    , 'which are'	=> 'w_r'
+    , 'which are'       => 'w_r'
     , 'which are not'   => 'w_rt'
-    , "which aren't"	=> 'w_rt'
+    , "which aren't"    => 'w_rt'
 
-    , "has not"		=> 'hs_t'
-    , "have not"	=> 'hv_t'
+    , "has not"         => 'hs_t'
+    , "have not"        => 'hv_t'
 
-    , "that has"	=> 't_hs'
-    , "that has not"	=> 't_hst'
-    , "that hasn't"	=> 't_hst'
+    , "that has"        => 't_hs'
+    , "that has not"    => 't_hst'
+    , "that hasn't"     => 't_hst'
 
-    , 'which has'	=> 'w_hs'
+    , 'which has'       => 'w_hs'
     , 'which has not'   => 'w_hst'
-    , "which hasn't"	=> 'w_hst'
+    , "which hasn't"    => 'w_hst'
 
-    , "that have"	=> 't_hv'
+    , "that have"       => 't_hv'
     , "that have not"   => 't_hvt'
-    , "that haven't"	=> 't_hvt'
+    , "that haven't"    => 't_hvt'
 
-    , 'which have'	=> 'w_hv'
-    , "which have not"	=> 'w_hvt'
-    , "which haven't"	=> 'w_hvt'
+    , 'which have'      => 'w_hv'
+    , "which have not"  => 'w_hvt'
+    , "which haven't"   => 'w_hvt'
 
-    , "that had"	=> 't_hd'
-    , "that had not"	=> 't_hdt'
-    , "that hadn't"	=> 't_hdt'
+    , "that had"        => 't_hd'
+    , "that had not"    => 't_hdt'
+    , "that hadn't"     => 't_hdt'
 
-    , 'which had'	=> 'w_hd'
-    , 'which had not'	=> 'w_hdt'
-    , "which hadn't"	=> 'w_hdt'
+    , 'which had'       => 'w_hd'
+    , 'which had not'   => 'w_hdt'
+    , "which hadn't"    => 'w_hdt'
 
-    , 'used to'	    => 'usdto'
-    , 'due to'	    => 'd_to'
+    , 'used to'     => 'usdto'
+    , 'due to'      => 'd_to'
 
     , 'United Kingdom' => 'UK'
     , 'United States'  => 'US'
@@ -689,8 +701,8 @@ use vars qw
 %SQZ_WXLATE_MULTI_HASH_MEDIUM = %SQZ_WXLATE_MULTI_HASH;
 %SQZ_WXLATE_MULTI_HASH_MAX    = %SQZ_WXLATE_MULTI_HASH;
 
-%SQZ_WXLATE_HASH_MEDIUM	      = %SQZ_WXLATE_HASH;
-%SQZ_WXLATE_HASH_MAX	      = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
+%SQZ_WXLATE_HASH_MEDIUM       = %SQZ_WXLATE_HASH;
+%SQZ_WXLATE_HASH_MAX          = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
 
 #   The Active translate tables
 #
@@ -698,7 +710,7 @@ use vars qw
 #   exactly what traslations are going and what table is in use, then peeek
 #   these.
 #
-#	$Lingua::EN::Squeeze::wordXlate{above}
+#       $Lingua::EN::Squeeze::wordXlate{above}
 
 use vars qw
 (
@@ -707,10 +719,9 @@ use vars qw
     $STATE
 );
 
-%wordXlate	= %SQZ_WXLATE_HASH_MAX;
-%multiWordXlate	= %SQZ_WXLATE_MULTI_HASH;
-$STATE		= "max";		# Squeeze level
-
+%wordXlate      = %SQZ_WXLATE_HASH_MAX;
+%multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
+$STATE          = "max";                # Squeeze level
 
 # **********************************************************************
 #
@@ -722,12 +733,7 @@ $STATE		= "max";		# Squeeze level
 
 =head1 INTERFACE FUNCTIONS
 
-=for html
-<BLOCKQUOTE>
-
 =cut
-
-
 
 # **********************************************************************
 #
@@ -737,9 +743,9 @@ $STATE		= "max";		# Squeeze level
 
 =pod
 
-=over 4
-
 =head2 SqueezeText($)
+
+=over
 
 =item Description
 
@@ -762,139 +768,146 @@ String, squeezed text.
 sub SqueezeText ($)
 {
 
+    #   If you wonder how these substitutions were selected ...
+    #   Just by feeding text after text to this function and
+    #   seeing how it could be compressed even more
+    #
+    #   => Trial and error. The order of these substitutions
+    #   => is highly significant.
+
     # ....................................................... &start ...
 
-    my	  $id	= "$LIB.SqueezeText";
-    local $ARG	= shift;
+    my    $id   = "$LIB.SqueezeText";
+    local $ARG  = shift;
 
 
-    return $ARG	if $STATE eq 'noconv';	# immediate return, no conversion
+    return $ARG if $STATE eq 'noconv';  # immediate return, no conversion
+
+    my $vow     = '[aeiouy]';           # vowel
+    my $nvow    = '[^aeiouy\s_/\']';    # non-vowel
 
 
-    my( $from, $to );
-
-    my $vow	= '[aeiouy]';		# vowel
-    my $nvow	= '[^aeiouy\s_/\']';	# non-vowel
-
-
-    my $orig	= $ARG;			# for debug
-    my $tab	= "";			# tab
+    my $orig    = $ARG;                 # for debug
+    my $tab     = "";                   # tab
 
     # ........................................................ &kill ...
 
-    if ( /^\s*[^\s]{30,}/ )	# Any continuous block. UU line ?
+    if ( /^\s*[^\s]{30,}/ )     # Any continuous block. UU line ?
     {
-	return "";
+        return "";
     }
 
-    if ( /^[A-Z][^\s]+: / )	# Email headers "From:"
+    if ( /^[A-Z][^\s]+: / )     # Email headers "From:"
     {
-	return "";
+        return "";
     }
 
-    s/^\s+//;		# delete leading spaces
-    s/[ \t]+$//;	# delete trailing spaces
-    s/[ \t]+/ /g;	# collapse multiple spaces inside text
+    s/^\s+//;           # delete leading spaces
+    s/[ \t]+$//;        # delete trailing spaces
+    s/[ \t]+/ /g;       # collapse multiple spaces inside text
 
     # ........................................................ words ...
 
-	#   Kill URLs
+        #   Kill URLs
 
     s{\b\S+://\S+\b}{URL}ig;
 
-	#   Delete markup +this+ *emphasised* *strong* `text'
+        #   Delete markup +this+ *emphasised* *strong* `text'
 
     s/\b[_*+`'](\S+)[_*+`']\b/$1/ig;
+
+        #  DON'T REMOVE. This comment fixes Emacs font-lock problem: s///
+        #  From above statement. It kinda don't know how to stop.
+
     $debug and warn $tab,"[markup]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   Delete 3rd person voice
-	#   expires => expire
-	#
-	#   But do not touch 'was'
+        #   Delete 3rd person voice
+        #   expires => expire
+        #
+        #   But do not touch 'was'
 
     s/\b($vow\S+$vow)s\b/$1/ogi;
 
-	#   says    => say
+        #   says    => say
 
     s/\b($nvow+\S$vow+)s\b/$1/ogi;
 
-	#   vowel .. nvowel + 2
-	#   interests => interest
+        #   vowel .. nvowel + 2
+        #   interests => interest
 
     s/\b($vow\S+$nvow)s\b/$1/ogi;
     $debug and warn $tab,"[3voice]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   Delete plurals: non-vowel .. non-vowel + s
-	#   problems  => problem
+        #   Delete plurals: non-vowel .. non-vowel + s
+        #   problems  => problem
 
     s/\b($nvow\S+$nvow)s\b/$1/ogi;
     $debug and warn $tab,"[plural]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   Delete plurals: non-vowel .. vowel + s
-	#   messages => message
+        #   Delete plurals: non-vowel .. vowel + s
+        #   messages => message
 
     s/\b($nvow\S+$vow)s\b/$1/ogi;
     $debug and warn $tab,"[plural2]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   zap
+        #   zap
 
     s/$SQZ_ZAP_REGEXP//oig;
     $debug and warn $tab,"[zap]\t\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-
     # ................................................... &translate ...
+
+    my ($from, $to);
 
     for $from ( keys %multiWordXlate  )
     {
-	$to = $multiWordXlate{ $from };
-	s/\b$from\b/$to/ig;
+        $to = $multiWordXlate{ $from };
+        s/\b$from\b/$to/ig;
     }
 
     $debug and warn $tab,"[xlate-multi]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
     for $from ( keys %wordXlate )
     {
-	$to = $wordXlate{ $from };
-	s/\b$from\b/$to/ig;
+        $to = $wordXlate{ $from };
+        s/\b$from\b/$to/ig;
     }
-
 
     $debug and warn $tab,"[xlate-word]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
     # ...................................................... &suffix ...
 
-	#   From Imperfect to active voice
-	#   converted => convert
+        #   From Imperfect to active voice
+        #   converted => convert
 
     s/\b($nvow\S\S+)ed\b/$1/igo;
 
-
-	#   cally => cly
+        #   shorten words with -cally suffix => cly
 
     s/cally\b/cly/g;
 
-	#   shorten comparision: bigger
-	#   We can't deduce quicker --> quick, becasue further on
-	#   the work would be converted quick --> qck. Not good any more.
+        #   shorten comparision: bigger
+        #   We can't deduce quicker --> quick, becasue further on
+        #   the word would be converted quick --> qck. Not good.
 
     s/\b($nvow+\S+e)r\b/$1/ogi;
     $debug and warn $tab,"[comparis]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	leaning --> leang
+        #       leaning --> leang
 
     s/ing\b/ng/ig;
     s/io\b/o/ig;
 
-	#	uniqe	    --> uniq
+        #       uniqe       --> uniq
 
     $debug and warn $tab,"[-io]\t\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   Watch out "due to"
+        #   Watch out "due to"
 
     s/(\S\S)ue(ness?)?\b/$1/ig;
 
-	#	authenticate -> authentic
-	#	Watch out 'state' !
+        #       authenticate -> authentic
+        #       Watch out 'state' !
 
     s/(\S\S\S)ate\b/$1/ig;
 
@@ -904,92 +917,88 @@ sub SqueezeText ($)
 
     $debug and warn $tab,"[0]\t\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	Vocal only at the beginning and end ==> drop last
-	#	info	=> inf
-	#
-	#	Don't touch away
+        #       Vocal only at the beginning and end ==> drop last
+        #       info    => inf
+        #
+        #       Don't touch away
 
     s/\b($vow+$nvow$nvow)$vow+\b/$1/ogi;
     $debug and warn $tab,"[vowel-last]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	only one vowel in string
-	#	help ==> hlp
-	#	stat		BUT can't deduce to stt
+        #       only one vowel in string
+        #       help ==> hlp
+        #       stat            BUT can't deduce to stt
 
     s/\b($nvow)$vow($nvow$nvow)\b/$1$2/ogi;
     $debug and warn $tab,"[vowel-one]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-
-	#	asked --> skd
+        #       asked --> skd
 
     s/\b($vow+$nvow$nvow)$vow($nvow)\b/$1$2/ogi;
     $debug and warn $tab,"[vowel-two]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-
-	#	Delete two vowels; through --> thrgh
-	#	Don't touch words ending to -ly: diffrently, difly
+        #       Delete two vowels; through --> thrgh
+        #       Don't touch words ending to -ly: diffrently, difly
 
     s/\b($nvow+)$vow$vow($nvow$nvow+)(?!y)\b/$1$2/ogi;
     $debug and warn $tab,"[vowel-many]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	type => typ
+        #       type => typ
 
     s/\b($nvow+$vow$nvow+(?!y))$vow\b/$1/ogi;
     $debug and warn $tab,"[vowel-end]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-
-	#	many vowels, remove first two
-	#	detected    => dtcted
-	#	service	    => srvce
+        #       many vowels, remove first two
+        #       detected    => dtcted
+        #       service     => srvce
 
     s/\b(\S+)$vow+($nvow+)$vow+(\S*$vow\S*)\b/$1$2$3/ogi;
     $debug and warn $tab,"[vowel-more]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	Two consequent vowels
-	#	obtain	    => obtan
+        #       Two consequent vowels
+        #       obtain      => obtan
 
     s/\b(\S*$vow$nvow+$vow)$vow(\S+)\b/$1$2/ogi;
     $debug and warn $tab,"[vowel-22more]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	Two non-vowels at the end
-	#	contact	    => contac
+        #       Two non-vowels at the end
+        #       contact     => contac
 
 #    s/($nvow)$nvow\b/$1/ogi;
 #   $debug and warn $tab,"[non-vowel-2end][$ARG]" if $orig =~ /$debugRegexp/;
 
-
-	#	Two same vowels
-	#	took	    => tok
-	#	keep	    => kep
+        #       Two same vowels
+        #       took        => tok
+        #       keep        => kep
 
     s/\b(\S+)($vow)\2(\S+)\b/$1$2$3/ogi;
     $debug and warn $tab,"[vowel-2same]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
     # .................................................... &suffixes ...
 
-    #	frequency   => freq
-    #	acceptance  => accept
-    #	distance    => dist
+    #   frequency   => freq
+    #   acceptance  => accept
+    #   distance    => dist
 
     s/u?[ae]nc[ye]\b//ig;
 
-	#	management	=> manag
-	#	establishement	=> establish
+        #       management      => manag
+        #       establishement  => establish
 
     s/ement\b/nt/ig;
 
-        #	allocation => allocan
+        #       allocation => allocan
 
     s/[a-z]ion\b/n/ig;
 
-	#	hesitate --> hesit
+        #       hesitate --> hesit
 
     s/tate\b/t/ig;
 
     # ................................................. &multi-chars ...
 
-    s/ph\b//g;			# paragraph --> paragra
-    s/ph/f/g;			# photograph --> fotogra
+    s/ph\b//g;                  # paragraph --> paragra
+    s/ph/f/g;                   # photograph --> fotogra
 
     $debug and warn $tab,"[multi]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
@@ -997,75 +1006,72 @@ sub SqueezeText ($)
 
     s/([0-9])(st|nd|th)/$1/ig;  # get rid of 1st 2nd ...
 
+        # Shorted full month names
+
     s/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]+\b/$1/ig;
 
-
-	#	"This is the end. And new sentence."
-	#	We can leave out the period.
+        #       "This is the end. And new sentence."
+        #       We can leave out the period.
 
     s/\.\s+([A-Z])/$1/g;
 
-
-	#	Any line starting that does not start with aphanumeric can be
-	#	deleted. Like
-	#
-	#	    Well, this is
-	#
-	#	is previously shortened to ", this is" and the leading is now
-	#	shortened to
-	#
-	#	    this is
+        #       Any line starting that does not start with aphanumeric can be
+        #       deleted. Like
+        #
+        #           Well, this is
+        #
+        #       is previously shortened to ", this is" and the leading is now
+        #       shortened to
+        #
+        #           this is
 
     s/^\s*[.,;:]\s*//;
-    s/\s*\W+$/\n/;	# ending similarly.
+    s/\s*\W+$/\n/;      # ending similarly.
 
     $debug and warn $tab,"[shorthand]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	we don't need these,
+        #       we don't need these,
 
-    s/[!#\$'\"*|\\^]//g;		# dummy "' to restore Emacs font-lock
+    s/[!#\$'\"*|\\^]//g;                # dummy "' to restore Emacs font-lock
 
-	#	carefully => carefuly
-	#	Don't touch 'all'
+        #       carefully => carefuly
+        #       Don't touch 'all'
 
-    s/([flkpsy])\1\B/$1/ig;		# Any double char to one char
+    s/([flkpsy])\1\B/$1/ig;             # Any double char to one char
 
     $debug and warn $tab,"[double]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   Any double chars at the END of work
+        #   Any double chars at the END of work
 
     s/\b(\S*$vow\S*)([^0-9])\2\b/$1$2/i;
 
     $debug and warn $tab,"[double-end]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#	short => shor
+        #       short => shor
 
-    s/\rt\b/r/ig;		# Any double char to one char
+    s/\rt\b/r/ig;               # Any double char to one char
 
     $debug and warn $tab,"[rt]\t[$ARG]" if $orig =~ /$debugRegexp/;
-
 
     # .................................................... &optimize ...
 
     if ( $SQZ_OPTIMIZE_LEVEL )
     {
-	s/\s+(.)/\U$1/g;	# kill empty spaces
+        s/\s+(.)/\U$1/g;        # kill empty spaces
     }
-
 
     $ARG;
 }
 
-
-# This section is automatically updated by function
-# TinyPerl.el::tiperl-selfstubber-stubs. Do not touch the BEGIN END tokens.
+#   This section is automatically updated by Emacs function
+#   tinyperl.el::tiperl-selfstubber-stubs. Do not touch the BEGIN END tokens.
+#   See http://tiny-tools.sourceforge.net/
 
 # BEGIN: Devel::SelfStubber
 
-
-sub Squeeze::SqueezeHashSet ($;$);
-sub Squeeze::SqueezeControl (;$);
-sub Squeeze::SqueezeDebug (;$$);
+sub Lingua::EN::Squeeze::SqueezeHashSet ($;$);
+sub Lingua::EN::Squeeze::SqueezeControl (;$) ;
+sub Lingua::EN::Squeeze::SqueezeDebug   (;$$);
 
 # END: Devel::SelfStubber
 
@@ -1083,17 +1089,17 @@ __DATA__
 
 =pod
 
-=over 4
-
 =head2 new()
+
+=over
 
 =item Description
 
-Return class object.
+Return new class object.
 
 =item Return values
 
-object.
+Object.
 
 =back
 
@@ -1119,9 +1125,9 @@ sub new
 
 =pod
 
-=over 4
-
 =head2 SqueezeHashSet($;$)
+
+=over
 
 =item Description
 
@@ -1130,14 +1136,13 @@ is done first and after that the single words conversions.
 
 =item arg1: \%wordHashRef
 
-Pointer to be used to convert single words.
-If "reset", use default hash table.
-
+Pointer to a hash to be used to convert single words. If "reset", use
+default hash table.
 
 =item arg2: \%multiHashRef [optional]
 
-pointer to be used to convert multiple words.
-If "reset", use default hash table.
+Pointer to a hash to be used to convert multiple words. If "reset", use
+default hash table.
 
 =item Return values
 
@@ -1149,38 +1154,38 @@ None.
 
 sub SqueezeHashSet ($;$)
 {
-    my	  $id	= "$LIB.SqueezeHashSet";
+    my    $id   = "$LIB.SqueezeHashSet";
     my( $wordHashRef, $multiHashRef ) = @ARG;
 
     if ( $wordHashRef eq 'reset' or $wordHashRef eq 'default' )
     {
-	%wordXlate  = %SQZ_WXLATE_HASH_MAX;
+        %wordXlate  = %SQZ_WXLATE_HASH_MAX;
     }
     elsif ( defined %$wordHashRef )
     {
-	%wordXlate  = %$wordHashRef;
+        %wordXlate  = %$wordHashRef;
     }
     else
     {
-	confess "$id: ARG1 must be a hash reference";
+        confess "$id: ARG1 must be a hash reference";
     }
 
 
     if ( defined $multiHashRef )
     {
 
-	if (  $multiHashRef eq 'reset' or $multiHashRef eq 'default'  )
-	{
-	    %multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
-	}
-	elsif ( defined %$multiHashRef )
-	{
-	    %multiWordXlate = %$multiHashRef;
-	}
-	else
-	{
-	    confess "$id: ARG2 must be a hash reference";
-	}
+        if (  $multiHashRef eq 'reset' or $multiHashRef eq 'default'  )
+        {
+            %multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
+        }
+        elsif ( defined %$multiHashRef )
+        {
+            %multiWordXlate = %$multiHashRef;
+        }
+        else
+        {
+            confess "$id: ARG2 must be a hash reference";
+        }
     }
 }
 
@@ -1193,22 +1198,24 @@ sub SqueezeHashSet ($;$)
 
 =pod
 
-=over 4
-
 =head2 SqueezeControl(;$)
+
+=over
 
 =item Description
 
-Select level of text squeezing: noconv, enable, medium, maximum.
+Select level of compression, which can be one of noconv, enable, medium,
+maximum.
 
 =item arg1: $state
 
-String. If nothing, set maximum squeeze level (kinda: restore defualts).
+String. If nothing, use maximum squeeze level. Other string values accepted
+are:
 
-    noconv	Turn off squeeze
-    conv	Turn on squeeze
-    med		Set squeezing level to medium
-    max		Set squeezing level to maximum
+    noconv      Turn off squeeze
+    conv        Turn on squeeze
+    med         Set squeezing level to medium
+    max         Set squeezing level to maximum
 
 =item Return values
 
@@ -1220,27 +1227,27 @@ None.
 
 sub SqueezeControl (;$)
 {
-    my	$id	= "$LIB.SqueezeControl";
+    my  $id     = "$LIB.SqueezeControl";
 
-    $STATE	= shift;
-    $STATE	= "max"   if not defined $STATE;
+    $STATE      = shift;
+    $STATE      = "max"   if not defined $STATE;
 
     if ( $STATE eq '' or $STATE =~ /^max/i  )
     {
-	SqueezeHashSet "reset", "reset";
+        SqueezeHashSet "reset", "reset";
     }
     elsif ( $STATE =~ /^med/i )
     {
-	SqueezeHashSet	\%SQZ_WXLATE_HASH_MEDIUM ,
-			\%SQZ_WXLATE_MULTI_HASH_MEDIUM;
+        SqueezeHashSet  \%SQZ_WXLATE_HASH_MEDIUM ,
+                        \%SQZ_WXLATE_MULTI_HASH_MEDIUM;
     }
     elsif ( $STATE =~ /^(conv|noconv|max)/i )
     {
-	# do nothing
+        # do nothing
     }
     else
     {
-	confess "$id: Unknown ARG";
+        confess "$id: Unknown ARG";
     }
 
 }
@@ -1254,9 +1261,9 @@ sub SqueezeControl (;$)
 
 =pod
 
-=over 4
-
 =head2 SqueezeDebug(;$$)
+
+=over
 
 =item Description
 
@@ -1264,11 +1271,10 @@ Activate or deactivate debug.
 
 =item arg1: $state [optional]
 
-If not given, turn debug off. If non-zero, turn debug on.
-You must also supply C<regexp> if you turn on debug, unless you have
-given it previously.
+If not given, turn debug off. If non-zero, turn debug on. You must also
+supply C<regexp> if you turn on debug, unless you have given it previously.
 
-=item arg1: $regexp [optional]
+=item arg2: $regexp [optional]
 
 If given, use regexp to trigger debug output when debug is on.
 
@@ -1282,7 +1288,7 @@ None.
 
 sub SqueezeDebug (;$$)
 {
-    my	$id = "$LIB.SqueezeDebug";
+    my  $id = "$LIB.SqueezeDebug";
     my ( $state, $regexp ) = @ARG;
 
     $debug  = $state;
@@ -1297,27 +1303,20 @@ sub SqueezeDebug (;$$)
 
 =pod
 
-=for html
-</BLOCKQUOTE>
-
 =head1 AVAILABILITY
 
-Author can be reached at jari.aalto@poboxes.com HomePage via forwarding
-service is at http://www.netforward.com/poboxes/?jari.aalto or
-alternatively absolute url is at ftp://cs.uta.fi/pub/ssjaaa/ but this may
-move without notice. Prefer keeping the forwarding service link in your
-bookmark.
+Author can be reached at jari.aalto@poboxes.com
 
-Latest version of this module can be found at $CPAN/modules/by-module/Lingua/
+Latest version of this module can be found at CPAN/modules/by-module/Lingua/
 
 =head1 AUTHOR
 
-Copyright (C) 1998-1999 Jari Aalto. All rights reserved. This program is
+Copyright (C) 1998-2004 Jari Aalto. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same
-terms as Perl itself or in terms of Gnu General Public licence v2 or later.
+terms as Perl itself or in terms of Gnu General Public licence v2.
 
 =cut
 
 __END__
 
-# end of file Squeeze.pm
+# End of file Squeeze.pm
