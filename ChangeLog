@@ -1,0 +1,65 @@
+2005-02-16 Wed  Jari Aalto  <jari dot aalto A T cante dot net>
+
+        * Makefile.PL (ExtUtils::MakeMaker): 1.2 Added META.yml
+        support (rewrote whole file).
+
+        * META.yml: New.
+
+        * t/test.t: 1.1 New. Use `Test::More'.
+
+        * test.pl: Removed.
+
+        * Squeeze.pm: 1.4
+        - Now supports fully object oriented interface too.
+        - Changed License from (Perl/GPL2) to GPL v2 or later.
+        (Top level): Chnaged 'BEGIN{require 5.003}'
+        to 'use 5.003'.
+        (Top level::$debugRegexp): DummyJummy => DummyYummy
+        (SqueezeObjectArg): 1.4 New.
+        (SqueezeText): 1.4 Use `SqueezeObjectArg' to support OO.
+        (SqueezeHashSet): 1.4 Use `SqueezeObjectArg' to support OO.
+        (SqueezeControl): 1.4 Use `SqueezeObjectArg' to support OO.
+        Rearranged `$STATE' variable setting. Removed 'max' from
+        `elseif', because it was already in `if'. `confess'
+        now prints `$ARG'.
+        (SqueezeDebug): 1.4 Use `SqueezeObjectArg' to support OO.
+
+2003-10-03 Fri  Jari Aalto <jari aalto A T poboxes dt com>
+
+        * Squeeze.pm (SqueezeText): 1.2 Fixed autolaod section by Adding
+        prefix Lingua::EN:: Bug reported by Ian Beckwith
+        <ianb@nessie.mcc.ac.uk>. Fixed all Pod warnings by
+        moving =over tags just above =item tags.
+
+Wed 1998-10-14 09:19:31  Jari Aalto  <jari aalto A T poboxes dt com>
+
+        * Squeeze.pm: v1.19 Lingua-EN-Squeeze-1998.1008.tar.gz released to
+        PAUSE and annouced in comp.lang.perl.announce and c.l.p.modules
+
+Mon Sep 28 19:16:42 1998  Jari Aalto  <jari aalto A T poboxes dt com>
+
+        * Squeeze.pm:
+        (sub SqueezeDebug): variable `STATE' --> `state'.
+        Text "end of file" in wrong place.
+        (sub SqueezeControl): use regexp text instead of `eq' MAX MED.
+
+        * Squeeze.pm: v1.21 Lingua-EN-Squeeze-1998.0928.tar.gz
+        has been released to PAUSE and annouced in
+        clp.announce
+
+        * Squeeze.pm
+        Now supports autoload "use SelfLoader". Function have been placed
+        after __DATA__. EXPORTABLE VARIABLES POD now use =item for
+        each variable.
+        (sub SqueezeText): Added
+        conversion 'cally' -> 'cly'
+        (sub SqueezeText): SQZ_ZAP_REGEXP is now used before
+        work conversions.
+
+Fri Sep 25 18:39:55 1998  Jari Aalto  <jari aalto A T poboxes dt com>
+
+        * Squeeze.pm: v1.19 Lingua-EN-Squeeze-1998.0925.tar.gz
+        has been released to PAUSE and annouced in
+        clp.announce and clp.modules
+
+        * test.pl (Squeeze::wordXlate,): Commented out the OBJECT test.

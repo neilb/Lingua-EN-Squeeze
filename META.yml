@@ -1,10 +1,9 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Lingua-EN-Squeeze
-version:      2003.1003
-version_from: Squeeze.pm
-installdirs:  site
-requires:
-
+---
+name: Lingua-EN-Squeeze
+version: 2005.0216
+license: gpl
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.16
+requires:
+  Test::More: 0
+installdirs: site
+generated_by: Lingua-EN-Squeeze version 2005.0216 (Makefile.PL)

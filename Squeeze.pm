@@ -1,32 +1,19 @@
 # Squeez.pm - Perl package to shorten text to minimum syllables
-# $Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $
+# $Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $
 #
 # This file is maintaned by using Emacs (The Editor) and add-on
 # packages. See http://tiny-tools.sourceforge.net/
 #
 #   tinytab.el -- indent mode
-#   tinyperl     -- Perl helper mode (pod docs, stubs etc)
-#   tinybm.el    -- those drawn &TAG lines and breaks you see
+#   tinyperl   -- Perl helper mode (pod docs, stubs etc)
 #
 # To generate HTML
 #
 #   $ perl -e 'use Pod::Html qw(pod2html); pod2html shift @ARGV' FILE.pm
-#
-# To make a CPAN package:
-#
-#   $ mkdir -p Lingua-EN-Squeeze-YYYY.MMDD
-#   $ cp Squeeze.pm Makefile.PL INSTALL Lingua-EN-Squeeze-YYYY.MMDD
-#   $ cp Makefile.PL Lingua-EN-Squeeze-YYYY.MMDD
-#   $ tar zvcf Lingua-EN-Squeeze-YYYY.MMDD.tar.gz Lingua-EN-Squeeze-YYYY.MMDD/
-#
-# The last step can be done with:
-#
-#   $ make dist
 
 package Lingua::EN::Squeeze;
 
-my $LIB = "Lingua::EN::Squeeze";        # For debug printing
-
+    my $LIB = "Lingua::EN::Squeeze";        # For debug printing
 
     use vars qw ( $VERSION );
 
@@ -37,7 +24,7 @@ my $LIB = "Lingua::EN::Squeeze";        # For debug printing
     #   The following variable is updated by Emacs setup tinyperl.el
     #   whenever this file is saved
 
-    $VERSION = '2003.1003';
+    $VERSION = '2005.0216';
 
 # ***********************************************************************
 #
@@ -53,7 +40,7 @@ Squeeze.pm - Shorten text to minimum syllables by using hash table lookup and vo
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $
+$Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $
 
 =head1 SYNOPSIS
 
@@ -67,9 +54,19 @@ $Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $
         print "Squeezed: ", SqueezeText lc $ARG;
     }
 
+    #  Or you can use object oriented interface
+
+    $squeeze = new Lingua::EN::Squeeze;
+
+    while (<>)
+    {
+        print "Original: $ARG\n";
+        print "Squeezed: ", $squeeze->SqueezeText(lc $ARG);
+    }
+
 =head1 DESCRIPTION
 
-Squeeze English text to most compact format possible so that it is barely
+Squeeze english text to most compact format possible so that it is barely
 readable. Be sure to convert all text to lowercase before using the
 SqueezeText() for maximum compression, because optimizations have been
 designed mostly for uncapitalized letters.
@@ -288,22 +285,18 @@ Aggressive I<Single Word> conversions like: without => w/o are applied last.
 
 =cut
 
-# ......................................................... &pod-end ...
 
-
-
-# ******************************************************* &interface ***
+# **********************************************************************
 #
 #   MODULE INTERFACE
 #
 # ***********************************************************************
 
-BEGIN { require 5.003 }
-
+use 5.003;
 use strict;
 
 # Somehow doesn't work in Perl 5.004 ?
-# use autouse 'Carp'          => qw( croak carp cluck confess );
+# use autouse 'Carp' => qw( croak carp cluck confess );
 
 use Carp;
 use SelfLoader;
@@ -334,7 +327,7 @@ BEGIN
     );
 
     $FILE_ID =
-        q$Id: Squeeze.pm,v 1.2 2000/12/10 05:11:06 jaalto Exp $;
+        q$Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $;
 
     #   Here woudl be the real version number, which you use like this:
     #
@@ -380,9 +373,7 @@ BEGIN
     (
         ALL => [ @EXPORT_OK, @EXPORT ]
     );
-
 }
-
 
 # ********************************************************* &globals ***
 #
@@ -391,7 +382,7 @@ BEGIN
 # **********************************************************************
 
 $debug          = 0;
-$debugRegexp    = '(?i)DummyJummy';
+$debugRegexp    = '(?i)DummyYummy';
 
 $SQZ_ZAP_REGEXP =
         '\b(a|an|the|shall|hi|hello|cheers|that)\b'
@@ -501,7 +492,6 @@ $SQZ_OPTIMIZE_LEVEL = 0;
     , minimum       => 'min'
     , module        => 'mod'
     , month         => 'MM'
-
 
     , 'name'        => 'nam'
     , 'number'      => 'nbr'
@@ -626,7 +616,6 @@ $SQZ_OPTIMIZE_LEVEL = 0;
 
     , 'with or without' => 'w/o'
 
-
     , 'it is'       => 'i_s'
     , "it's"        => 'i_s'
 
@@ -679,7 +668,6 @@ $SQZ_OPTIMIZE_LEVEL = 0;
     , 'United Kingdom' => 'UK'
     , 'United States'  => 'US'
 );
-
 
 # ********************************************************* &private ***
 #
@@ -735,6 +723,56 @@ $STATE          = "max";                # Squeeze level
 
 =cut
 
+
+# **********************************************************************
+#
+#   PUBLIC FUNCTION
+#
+# *********************************************************************
+
+=pod
+
+=head2 SqueezeObjectArg($)
+
+=over
+
+=item Description
+
+Return subroutine argument in both function and object cases.
+This is a wrapper utility to make package work as a function
+library as well as OO class.
+
+=item @list
+
+List of arguments. Usually the first one is object if class
+interface is used.
+
+=item Return values
+
+Return arguments without the first object parameter.
+
+=back
+
+=cut
+
+sub SqueezeObjectArg (@)
+{
+    my @list = @ARG;
+    my $ref  = ref( $list[0] );
+
+    #  This test may not be the bets, but we suppose this is
+    #  class if we find text like 'Linguag::EN::Squeeze'.
+    #
+    #   FIXME: What about derived classes (although unlikely)
+
+    if ( $ref =~ /::[a-z]+::/i )
+    {
+        shift @list;   # Remove arg
+    }
+
+    @list;
+}
+
 # **********************************************************************
 #
 #   PUBLIC FUNCTION
@@ -767,7 +805,6 @@ String, squeezed text.
 
 sub SqueezeText ($)
 {
-
     #   If you wonder how these substitutions were selected ...
     #   Just by feeding text after text to this function and
     #   seeing how it could be compressed even more
@@ -778,14 +815,13 @@ sub SqueezeText ($)
     # ....................................................... &start ...
 
     my    $id   = "$LIB.SqueezeText";
-    local $ARG  = shift;
 
+    local($ARG) = SqueezeObjectArg(@ARG);
 
     return $ARG if $STATE eq 'noconv';  # immediate return, no conversion
 
     my $vow     = '[aeiouy]';           # vowel
     my $nvow    = '[^aeiouy\s_/\']';    # non-vowel
-
 
     my $orig    = $ARG;                 # for debug
     my $tab     = "";                   # tab
@@ -817,7 +853,7 @@ sub SqueezeText ($)
     s/\b[_*+`'](\S+)[_*+`']\b/$1/ig;
 
         #  DON'T REMOVE. This comment fixes Emacs font-lock problem: s///
-        #  From above statement. It kinda don't know how to stop.
+        #  From above statement.
 
     $debug and warn $tab,"[markup]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
@@ -1080,7 +1116,6 @@ __DATA__
 
 #  -- A U T O L O A D  -- A U T O L O A D  -- A U T O L O A D  --
 
-
 # **********************************************************************
 #
 #   PUBLIC FUNCTION
@@ -1107,15 +1142,14 @@ Object.
 
 sub new
 {
-     my $pkg   = shift;
-     my $type  = ref($pkg) || $pkg;
+    my $pkg   = shift;
+    my $type  = ref($pkg) || $pkg;
 
-     my $this  = {};
-     bless $this, $type;
+    my $this  = { @ARG };
+    bless $this, $type;
 
-     $this;
+    $this;
 }
-
 
 # **********************************************************************
 #
@@ -1155,7 +1189,7 @@ None.
 sub SqueezeHashSet ($;$)
 {
     my    $id   = "$LIB.SqueezeHashSet";
-    my( $wordHashRef, $multiHashRef ) = @ARG;
+    my( $wordHashRef, $multiHashRef ) = SqueezeObjectArg(@ARG);
 
     if ( $wordHashRef eq 'reset' or $wordHashRef eq 'default' )
     {
@@ -1169,7 +1203,6 @@ sub SqueezeHashSet ($;$)
     {
         confess "$id: ARG1 must be a hash reference";
     }
-
 
     if ( defined $multiHashRef )
     {
@@ -1188,7 +1221,6 @@ sub SqueezeHashSet ($;$)
         }
     }
 }
-
 
 # **********************************************************************
 #
@@ -1229,10 +1261,10 @@ sub SqueezeControl (;$)
 {
     my  $id     = "$LIB.SqueezeControl";
 
-    $STATE      = shift;
-    $STATE      = "max"   if not defined $STATE;
+    $STATE      = "max";
+    ($STATE)    = SqueezeObjectArg(@ARG)  if @ARG;
 
-    if ( $STATE eq '' or $STATE =~ /^max/i  )
+    if ( $STATE eq ''  or  $STATE =~ /^max/i  )
     {
         SqueezeHashSet "reset", "reset";
     }
@@ -1241,17 +1273,15 @@ sub SqueezeControl (;$)
         SqueezeHashSet  \%SQZ_WXLATE_HASH_MEDIUM ,
                         \%SQZ_WXLATE_MULTI_HASH_MEDIUM;
     }
-    elsif ( $STATE =~ /^(conv|noconv|max)/i )
+    elsif ( $STATE =~ /^(conv|noconv)/i )
     {
         # do nothing
     }
     else
     {
-        confess "$id: Unknown ARG";
+        confess "$id: Unknown ARG {$ARG]";
     }
-
 }
-
 
 # **********************************************************************
 #
@@ -1289,7 +1319,7 @@ None.
 sub SqueezeDebug (;$$)
 {
     my  $id = "$LIB.SqueezeDebug";
-    my ( $state, $regexp ) = @ARG;
+    my ( $state, $regexp ) = SqueezeObjectArg(@ARG);
 
     $debug  = $state;
     defined $regexp and $debugRegexp = $regexp;
@@ -1305,15 +1335,13 @@ sub SqueezeDebug (;$$)
 
 =head1 AVAILABILITY
 
-Author can be reached at jari.aalto@poboxes.com
-
 Latest version of this module can be found at CPAN/modules/by-module/Lingua/
 
 =head1 AUTHOR
 
-Copyright (C) 1998-2004 Jari Aalto. All rights reserved. This program is
-free software; you can redistribute it and/or modify it under the same
-terms as Perl itself or in terms of Gnu General Public licence v2.
+Copyright (C) 1998-2005  Jari Aalto
+free software; you can redistribute it and/or modify it under the
+terms of Gnu General Public licence v2 or later.
 
 =cut
 

@@ -1,4 +1,4 @@
-File id
+Short description of Lingua::EN::Squeeze.pm module
 
     NAME
 
@@ -17,6 +17,16 @@ File id
                 print "Squeezed: ", SqueezeText lc $ARG;
             }
 
+            #  Or you can use object oriented interface
+
+            $squeeze = new Lingua::EN::Squeeze;
+
+            while (<>)
+            {
+                print "Original: $ARG\n";
+                print "Squeezed: ", $squeeze->SqueezeText(lc $ARG);
+            }
+
     DESCRIPTION
 
         Squeeze English text to most compact format possible so that it is
@@ -24,18 +34,18 @@ File id
         using the SqueezeText() for maximum compression, because
         optimizations have been designed mostly for uncapitalized letters.
 
-
         Warning: Each line is processed multiple times, so prepare for slow
         conversion time'
 
-        You can use this module e.g. to preprocess text before it is sent to
-        electronic media that has some maximum text size limit. For example pagers
-        have an arbitrary text size limit, typically around 200 characters, which
-        you want to fill as much as possible. Alternatively you may have GSM
-        cellular phone which is capable of receiving Short Messages (SMS), whose
-        message size limit is 160 characters. For demonstration of this module's
-        SqueezeText() function, this paragraph's conversion result is presented
-        below. See yourself if it's readable (Yes, it takes some time to get used
+        You can use this module e.g. to preprocess text before it is sent
+        to electronic media that has some maximum text size limit. For
+        example pagers have an arbitrary text size limit, typically around
+        200 characters, which you want to fill as much as possible.
+        Alternatively you may have GSM cellular phone which is capable of
+        receiving Short Messages (SMS), whose message size limit is 160
+        characters. For demonstration of this module's SqueezeText()
+        function, this paragraph's conversion result is presented below.
+        See yourself if it's readable (Yes, it takes some time to get used
         to). The compression ratio is typically 30-40%
 
             u _n use thi mod e.g. to prprce txt bfre i_s snt to

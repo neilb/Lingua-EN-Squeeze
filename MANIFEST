@@ -1,6 +1,8 @@
+ChangeLog
 INSTALL
-README
 Makefile.PL
 MANIFEST                        This list of files
 META.yml
+README
 Squeeze.pm
+t/test.t
