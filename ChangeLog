@@ -1,0 +1,3 @@
+Fri Sep 25 18:39:55 1998  Jari Aalto  <jari.aalto@poboxes.com>
+
+	* test.pl (Squeeze::wordXlate,): Commented out the OBJECT test.
