@@ -1,5 +1,5 @@
 # @(#) Squeez.pm - Perl package to Shorten text to minimum syllables
-# @(#) $Id: Squeeze.pm,v 1.19 1998/09/25 17:25:53 jaalto Exp jaalto $
+# @(#) $Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $
 
 package Lingua::EN::Squeeze;
 
@@ -16,7 +16,7 @@ my $LIB = "Lingua::EN::Squeeze";	# For function debug
     #
     #	The REAL version number is defined later
 
-    $VERSION = '1998.0925';
+    $VERSION = '1998.0928';
 
 # ....................................................... &pod-start ...
 
@@ -28,12 +28,12 @@ Squeeze.pm - Shorten text to minimum syllables by using hash and vowel deletion
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.19 1998/09/25 17:25:53 jaalto Exp jaalto $
+$Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $
 
 =head1 SYNOPSIS
 
     use Squeeze.pm;	    # imnport only function
-    use Squeeze qw( :ALL ); # function + variables
+    use Squeeze qw( :ALL ); # import all functions and variables
     use English;
 
     while (<>)
@@ -89,59 +89,60 @@ understand this, but just some common sense and time to adapt yourself to
 this text. I<For a complete up to date list, you have to peek the source
 code>
 
-    , 'for'         => '4'
-    , 'for him'	    => '4h'
-    , 'for her'	    => '4h'
-    , 'for them'    => '4t'
-    , 'for those'   => '4t'
+    automatically => 'acly_'
 
-    , can	    => '_n'
-    , does	    => '_s'
-    , 'it is'	    => 'i_s'
-    , 'that is'	    => 't_s'
-    , 'which is'    => 'w_s'
-    , 'that are'    => 't_r'
-    , 'which are'   => 'w_r'
+    for           => 4
+    for him       => 4h
+    for her       => 4h
+    for them      => 4t
+    for those     => 4t
 
-    , 'less'	    => '-/'
-    , 'more'	    => '+/'
-    , 'most'	    => '++'
+    can           => _n
+    does          => _s
 
-    , however	    => 'h/ver'
-    , think	    => 'thk_'
+    it is         => i_s
+    that is       => t_s
+    which is      => w_s
+    that are      => t_r
+    which are     => w_r
 
-    , useful	    => 'usful'
+    less          => -/
+    more          => +/
+    most          => ++
 
-    , you           => 'u'
-    , your          => 'u/'
-    , "you'd"       => 'u/d'
-    , "you'll"      => 'u/l'
-    , they          => 't/'
-    , their         => 't/r'
+    however       => h/ver
+    think         => thk_
 
-    , will	    => '/w'
-    , would	    => '/d'
-    , with          => 'w/'
-    , 'without'     => 'w/o'
-    , 'which'	    => 'W/'
-    , whose	    => 'WS/'
+    useful        => usful
 
-    , automatically => 'acly_'
+    you           => u
+    your          => u/
+    you'd         => u/d
+    you'll        => u/l
+    they          => t/
+    their         => t/r
+
+    will          => /w
+    would         => /d
+    with          => w/
+    without       => w/o
+    which         => W/
+    whose         => WS/
 
 
 Time is expressed with big letters
 
-    , 'time'        => 'T'
-    , minute	    => 'MIN'
-    , second	    => 'SEC'
-    , hour	    => 'HH'
-    , day           => 'DD'
-    , month         => 'MM'
-    , year          => 'YY'
+    time          => T
+    minute        => MIN
+    second        => SEC
+    hour          => HH
+    day           => DD
+    month         => MM
+    year          => YY
 
 Other Big letter acronyms
 
-    , phone	    => 'PH'
+    phone	  => PH
 
 =head1 EXAMPLES
 
@@ -217,22 +218,22 @@ extend the hash tables and ZAP_REGEXP to include your unique text.
 
 =over 4
 
-=item $SQZ_ZAP_REGEXP
+=head2 $SQZ_ZAP_REGEXP
 
 text to kill immediately, like "Hm, Hi, Hello..." You can only set this
 once, because this regexp is compiled immediately when C<SqueezeText()> is
 first time called.
 
-=item %SQZ_WXLATE_MULTI_HASH
+=head2 %SQZ_WXLATE_MULTI_HASH
 
 I<Multi Word> conversion:  "for you" => "4u" ...
 
-=item %SQZ_WXLATE_HASH
+=head2 %SQZ_WXLATE_HASH
 
 I<Single Word> conversion hash: word => conversion. This table is applied
 after C<%SQZ_WXLATE_MULTI_HASH>
 
-=item %SQZ_WXLATE_EXTRA_HASH
+=head2 %SQZ_WXLATE_EXTRA_HASH
 
 Aggressive I<Single Word> conversions like: without => w/o ...
 
@@ -253,8 +254,11 @@ Aggressive I<Single Word> conversions like: without => w/o ...
 require 5.003;
 
 use	strict;
+
+use     SelfLoader;
 use	English;
 use	Carp;
+
 
 BEGIN
 {
@@ -279,7 +283,7 @@ BEGIN
     );
 
     $FILE_ID =
-	q$Id: Squeeze.pm,v 1.19 1998/09/25 17:25:53 jaalto Exp jaalto $;
+	q$Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $;
 
     #	Here is the real version number, for rcommands like
     #
@@ -329,14 +333,15 @@ BEGIN
 #
 # **********************************************************************
 
-$debug	= 0;
-$debugRegexp = '(?i)dummyJummy';
+$debug		= 0;
+$debugRegexp	= '(?i)dummyJummy';
 
 $SQZ_ZAP_REGEXP =
 	'\b(a|an|the|shall|hi|hello|cheers|that)\b'
     .   '|Thanks (in advance)?|thank you|well'
     .	'|N\.B\.|\beg.|\btia\b'
     .	'|\bHi,?\b|\bHm+,?\b'
+    .	'|!'
     .	'|wrote:|writes:'
 
     #	Finnish greetings
@@ -447,12 +452,14 @@ $SQZ_ZAP_REGEXP =
     , page	    => 'pg'
     , parameter	    => 'param'
     , password	    => 'pwd'
+    , pointer	    => 'ptr'
     , public	    => 'pub'
     , private	    => 'priv'
     , problem       => 'prb'
     , process	    => 'proc'
     , project       => 'prj'
 
+    , released	    => 'relsd'
     , reserve	    => 'rsv'
     , register      => 'reg'
     , resource      => 'rc'
@@ -508,6 +515,8 @@ $SQZ_ZAP_REGEXP =
     , however	    => 'h/ver'
 
     , increment	    => 'inc/'
+    , interesting   => 'inrsg'
+    , interrupt	    => 'irup'
 
     #	 not spelled like 'less', because plural substitution seens
     #	 this first 'less' -> 'les'
@@ -609,14 +618,25 @@ $SQZ_ZAP_REGEXP =
 #
 # **********************************************************************
 
-my %SQZ_WXLATE_MULTI_HASH_MEDIUM = %SQZ_WXLATE_MULTI_HASH;
-my %SQZ_WXLATE_MULTI_HASH_MAX    = %SQZ_WXLATE_MULTI_HASH;
+#   We must declare package globals sot hat SelfLoader sees them after
+#   __DATA__
 
-my %SQZ_WXLATE_HASH_MEDIUM	 = %SQZ_WXLATE_HASH;
-my %SQZ_WXLATE_HASH_MAX	    = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
+use vars qw
+(
+    %SQZ_WXLATE_MULTI_HASH_MEDIUM
+    %SQZ_WXLATE_MULTI_HASH_MAX
+    %SQZ_WXLATE_HASH_MEDIUM
+    %SQZ_WXLATE_HASH_MAX
+);
+
+%SQZ_WXLATE_MULTI_HASH_MEDIUM = %SQZ_WXLATE_MULTI_HASH;
+%SQZ_WXLATE_MULTI_HASH_MAX    = %SQZ_WXLATE_MULTI_HASH;
+
+%SQZ_WXLATE_HASH_MEDIUM	    = %SQZ_WXLATE_HASH;
+%SQZ_WXLATE_HASH_MAX	    = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
 
 
-#   User isn't suppose to touche this, but in case you need to know
+#   User isn't suppose to touch this, but in case you need to know
 #   exactly what traslations are going and what table is in use, then peeek
 #   these.
 #
@@ -649,175 +669,6 @@ $STATE		= "max";		# Squeeze level
 
 =cut
 
-
-# **********************************************************************
-#
-#   PUBLIC FUNCTION
-#
-# *********************************************************************
-
-=pod
-
-=over 4
-
-=head2 new()
-
-=item Description
-
-Return class object.
-
-=item Return values
-
-object.
-
-=back
-
-=cut
-
-sub new
-{
-     my $pkg   = shift;
-     my $type  = ref($pkg) || $pkg;
-
-     my $this  = {};
-     bless $this, $type;
-
-     $this;
-}
-
-
-# **********************************************************************
-#
-#   PUBLIC FUNCTION
-#
-# *********************************************************************
-
-=pod
-
-=over 4
-
-=head2 SqueezeHashSet($;$)
-
-=item Description
-
-Set hash tables to use for converting text. The multiple word conversion
-is done first and after that the single words conversions.
-
-=item arg1: \%wordHashRef
-
-Pointer to be used to convert single words.
-If "reset", use default hash table.
-
-
-=item arg2: \%multiHashRef [optional]
-
-pointer to be used to convert multiple words.
-If "reset", use default hash table.
-
-=item Return values
-
-None.
-
-=back
-
-=cut
-
-sub SqueezeHashSet ($;$)
-{
-    my	  $id	= "$LIB.SqueezeHashSet";
-    my( $wordHashRef, $multiHashRef ) = @ARG;
-
-    if ( $wordHashRef eq 'reset' or $wordHashRef eq 'default' )
-    {
-	%wordXlate  = %SQZ_WXLATE_HASH_MAX;
-    }
-    elsif ( defined %$wordHashRef )
-    {
-	%wordXlate  = %$wordHashRef;
-    }
-    else
-    {
-	confess "$id: ARG1 must be a hash reference";
-    }
-
-
-    if ( defined $multiHashRef )
-    {
-
-	if (  $multiHashRef eq 'reset' or $multiHashRef eq 'default'  )
-	{
-	    %multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
-	}
-	elsif ( defined %$multiHashRef )
-	{
-	    %multiWordXlate = %$multiHashRef;
-	}
-	else
-	{
-	    confess "$id: ARG2 must be a hash reference";
-	}
-    }
-}
-
-
-# **********************************************************************
-#
-#   PUBLIC FUNCTION
-#
-# *********************************************************************
-
-=pod
-
-=over 4
-
-=head2 SqueezeControl(;$)
-
-=item Description
-
-Select level of text squeezing: noconv, enable, medium, maximum.
-
-=item arg1: $state
-
-String. If nothing, set maximum squeeze level (kinda: restore defualts).
-
-    noconv	Turn off squeeze
-    conv	Turn on squeeze
-    med		Set squeezing level to medium
-    max		Set squeezing level to maximum
-
-=item Return values
-
-None.
-
-=back
-
-=cut
-
-sub SqueezeControl (;$)
-{
-    my	$id	= "$LIB.SqueezeControl";
-
-    $STATE	= shift;
-    $STATE    ||= "max";
-
-    if ( $STATE eq '' or $STATE eq 'max'  )
-    {
-	SqueezeHashSet "reset", "reset";
-    }
-    elsif ( $STATE eq 'med' )
-    {
-	SqueezeHashSet \%SQZ_WXLATE_HASH_MEDIUM , \%SQZ_WXLATE_MULTI_HASH_MEDIUM;
-    }
-    elsif ( $STATE eq 'conv' or $STATE eq 'noconv' or $STATE eq 'max' )
-    {
-	# do nothing
-    }
-    else
-    {
-	confess "$id: Unknown ARG";
-    }
-
-}
 
 
 # **********************************************************************
@@ -890,7 +741,7 @@ sub SqueezeText ($)
 
 	#   Kill URLs
 
-    s,\b\S+://\S+\b,,ig;
+    s{\b\S+://\S+\b}{URL}ig;
 
 	#   Delete markup +this+ *emphasised* *strong* `text'
 
@@ -926,16 +777,13 @@ sub SqueezeText ($)
     s/\b($nvow\S+$vow)s\b/$1/ogi;
     $debug and warn $tab,"[plural2]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
-	#   From Imperfect to active voice
-	#   converted => convert
+	#   zap
 
-    s/\b($nvow\S\S+)ed/$1/igo;
+    s/$SQZ_ZAP_REGEXP//oig;
+    $debug and warn $tab,"[zap]\t\t[$ARG]" if $orig =~ /$debugRegexp/;
+
 
     # ................................................... &translate ...
-
-
-
-
 
     for $from ( keys %multiWordXlate  )
     {
@@ -956,17 +804,22 @@ sub SqueezeText ($)
 
     # ...................................................... &suffix ...
 
+	#   From Imperfect to active voice
+	#   converted => convert
+
+    s/\b($nvow\S\S+)ed\b/$1/igo;
+
+
+	#   cally => cly
+
+    s/cally\b/cly/g;
+
 	#   shorten comparision: bigger
 	#   We can't deduce quicker --> quick, becasue further on
 	#   the work would be converted quick --> qck. Not good any more.
 
     s/\b($nvow+\S+e)r\b/$1/ogi;
     $debug and warn $tab,"[comparis]\t[$ARG]" if $orig =~ /$debugRegexp/;
-
-	#   zap
-
-    s/$SQZ_ZAP_REGEXP//oig;
-    $debug and warn $tab,"[zap]\t\t[$ARG]" if $orig =~ /$debugRegexp/;
 
 	#	leaning --> leang
 
@@ -1133,6 +986,182 @@ sub SqueezeText ($)
     $debug and warn $tab,"[rt]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
     $ARG;
+}
+
+
+__DATA__
+
+#  -- A U T O L O A D  -- A U T O L O A D  -- A U T O L O A D  --
+
+
+# **********************************************************************
+#
+#   PUBLIC FUNCTION
+#
+# *********************************************************************
+
+=pod
+
+=over 4
+
+=head2 new()
+
+=item Description
+
+Return class object.
+
+=item Return values
+
+object.
+
+=back
+
+=cut
+
+sub new
+{
+     my $pkg   = shift;
+     my $type  = ref($pkg) || $pkg;
+
+     my $this  = {};
+     bless $this, $type;
+
+     $this;
+}
+
+
+# **********************************************************************
+#
+#   PUBLIC FUNCTION
+#
+# *********************************************************************
+
+=pod
+
+=over 4
+
+=head2 SqueezeHashSet($;$)
+
+=item Description
+
+Set hash tables to use for converting text. The multiple word conversion
+is done first and after that the single words conversions.
+
+=item arg1: \%wordHashRef
+
+Pointer to be used to convert single words.
+If "reset", use default hash table.
+
+
+=item arg2: \%multiHashRef [optional]
+
+pointer to be used to convert multiple words.
+If "reset", use default hash table.
+
+=item Return values
+
+None.
+
+=back
+
+=cut
+
+sub SqueezeHashSet ($;$)
+{
+    my	  $id	= "$LIB.SqueezeHashSet";
+    my( $wordHashRef, $multiHashRef ) = @ARG;
+
+    if ( $wordHashRef eq 'reset' or $wordHashRef eq 'default' )
+    {
+	%wordXlate  = %SQZ_WXLATE_HASH_MAX;
+    }
+    elsif ( defined %$wordHashRef )
+    {
+	%wordXlate  = %$wordHashRef;
+    }
+    else
+    {
+	confess "$id: ARG1 must be a hash reference";
+    }
+
+
+    if ( defined $multiHashRef )
+    {
+
+	if (  $multiHashRef eq 'reset' or $multiHashRef eq 'default'  )
+	{
+	    %multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
+	}
+	elsif ( defined %$multiHashRef )
+	{
+	    %multiWordXlate = %$multiHashRef;
+	}
+	else
+	{
+	    confess "$id: ARG2 must be a hash reference";
+	}
+    }
+}
+
+
+# **********************************************************************
+#
+#   PUBLIC FUNCTION
+#
+# *********************************************************************
+
+=pod
+
+=over 4
+
+=head2 SqueezeControl(;$)
+
+=item Description
+
+Select level of text squeezing: noconv, enable, medium, maximum.
+
+=item arg1: $state
+
+String. If nothing, set maximum squeeze level (kinda: restore defualts).
+
+    noconv	Turn off squeeze
+    conv	Turn on squeeze
+    med		Set squeezing level to medium
+    max		Set squeezing level to maximum
+
+=item Return values
+
+None.
+
+=back
+
+=cut
+
+sub SqueezeControl (;$)
+{
+    my	$id	= "$LIB.SqueezeControl";
+
+    $STATE	= shift;
+    $STATE    ||= "max";
+
+    if ( $STATE eq '' or $STATE eq 'max'  )
+    {
+	SqueezeHashSet "reset", "reset";
+    }
+    elsif ( $STATE eq 'med' )
+    {
+	SqueezeHashSet	\%SQZ_WXLATE_HASH_MEDIUM ,
+			\%SQZ_WXLATE_MULTI_HASH_MEDIUM;
+    }
+    elsif ( $STATE eq 'conv' or $STATE eq 'noconv' or $STATE eq 'max' )
+    {
+	# do nothing
+    }
+    else
+    {
+	confess "$id: Unknown ARG";
+    }
+
 }
 
 

@@ -1,3 +1,19 @@
+Mon Sep 28 19:16:42 1998  Jari Aalto  <jari.aalto@poboxes.com>
+
+	* Squeeze.pm
+	Now supports autoload "use SelfLoader". Function have been placed
+	after __DATA__. EXPORTABLE VARIABLES POD now use =item for
+	each variable.
+	(sub SqueezeText): Added
+	conversion 'cally' -> 'cly'
+	(sub SqueezeText): SQZ_ZAP_REGEXP is now used before
+	work conversions.
+
+
 Fri Sep 25 18:39:55 1998  Jari Aalto  <jari.aalto@poboxes.com>
+
+	* Squeeze.pm: v1.19 Lingua-EN-Squeeze-1998.0925.tar.gz
+	has been released to PAUSE and annouced in
+	clp.announce and clp.modules
 
 	* test.pl (Squeeze::wordXlate,): Commented out the OBJECT test.
