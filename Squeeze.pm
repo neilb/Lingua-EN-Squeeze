@@ -1,5 +1,5 @@
 # @(#) Squeez.pm - Perl package to Shorten text to minimum syllables
-# @(#) $Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $
+# @(#) $Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $
 #
 #	This file is maintaned by using Emacs and packages
 #
@@ -16,14 +16,13 @@ my $LIB = "Lingua::EN::Squeeze";	# For function debug
     use vars qw ( $VERSION );
 
     #	This is for use of Makefile.PL and ExtUtils::MakeMaker
-    #	So that it puts the tardist numbes as ISO YYYY.MMDD.
-    #
-    #	The following variable is updated by my Emacs setup whenever file
-    #	is saved
-    #
+    #	So that it puts the tardist number in format YYYY.MMDD
     #	The REAL version number is defined later
 
-    $VERSION = '1998.1008';
+    #	The following variable is updated by my Emacs setup whenever
+    #	this file is saved
+
+    $VERSION = '1998.1204';
 
 # ***********************************************************************
 #
@@ -35,11 +34,12 @@ my $LIB = "Lingua::EN::Squeeze";	# For function debug
 
 =head1 NAME
 
-Squeeze.pm - Shorten text to minimum syllables by using hash and vowel deletion
+Squeeze.pm - Shorten text to minimum syllables by using hash table and
+vowel deletion
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $
+$Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $
 
 =head1 SYNOPSIS
 
@@ -54,9 +54,9 @@ $Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $
 
 =head1 DESCRIPTION
 
-Squeeze text (English) to most compact format possibly so that it is barely
-readable. You shold convert all text to lowercase for maximum compression,
-because optimisations have been designed mostly fr unpapitalised letters.
+Squeeze English text to most compact format possibly so that it is barely
+readable. You should convert all text to lowercase for maximum compression,
+because optimizations have been designed mostly fr uncapitalised letters.
 
 =over 4
 
@@ -65,26 +65,43 @@ conversion time>
 
 =back
 
-You can use this module eg to preprocess text before it is sent to
-electronic media that has maximum text size limit. For example Pagers have
-some arbitrary text size limit, say 200 characters, which you want to fill
-as much as possible. Alternatively you may have GSM Cellular phone wich is
-capable of receiving Short Messages (SMS), whose text limit is 160
-characters. To your amusement, the description text of this paragraph has
-been converted below using this library's SqueezeText() function . See
-yourself if it's readable (Yes, it takes some time to get used to).
-The compress ratio is typically 30-40%
+You can use this module e.g. to preprocess text before it is sent to
+electronic media that has some maximum text size limit. For example pagers
+have an arbitrary text size limit, typically 200 characters, which you want
+to fill as much as possible. Alternatively you may have GSM cellular phone
+which is capable of receiving Short Messages (SMS), whose message size
+limit is 160 characters. For demonstration of this module's SqueezeText()
+function , the description text of this paragraph has been converted below.
+See yourself if it's readable (Yes, it takes some time to get used to). The
+compress ratio is typically 30-40%
 
-    u _n use thi mod to prprce txt bfre i_s snt to
-    elrnic mda t_hs max txt siz lim. f_xmple Pag hv
-    som abitry txt siz lim, say 200 chr, W/ u wnt to fll
-    as mch as psbleAlternatvly u may hv GSM Cllar PH wch is
-    cpble of rcivng Short msg (SMS), WS/ txt lim is 160
-    chrTo u/ amsment, dsc txt of thi prgra has
-    ben cnv_ blow usng thi lbrrys SquezText() fnc See
-    uself if i_s redble (Yes, it tak som T to get usdto
-    compr rati is typcly 30-40
+    u _n use thi mod e.g. to prprce txt bfre i_s snt to
+    elrnic mda has som max txt siz lim. f_xmple pag
+    hv  abitry txt siz lim, tpcly 200 chr, W/ u wnt
+    to fll as mch as psbleAlternatvly u may hv GSM cllar P8
+    w_s cpble of rcivng Short msg (SMS), WS/ msg siz
+    lim is 160 chr. 4 demonstrton of thi mods SquezText
+    fnc ,  dsc txt of thi prgra has ben cnvd_ blow
+    See uself if i_s redble (Yes, it tak som T to get usdto
+    compr rat is tpcly 30-40
 
+And if $SQZ_OPTIMIZE_LEVEL is set to non-zero
+
+    u_nUseThiModE.g.ToPrprceTxtBfreI_sSntTo
+    elrnicMdaHasSomMaxTxtSizLim.F_xmplePag
+    hvAbitryTxtSizLim,Tpcly200Chr,W/UWnt
+    toFllAsMchAsPsbleAlternatvlyUMayHvGSMCllarP8
+    w_sCpbleOfRcivngShortMsg(SMS),WS/MsgSiz
+    limIs160Chr.4DemonstrtonOfThiModsSquezText
+    fnc,DscTxtOfThiPrgraHasBenCnvd_Blow
+    SeeUselfIfI_sRedble(Yes,ItTakSomTToGetUsdto
+    comprRatIsTpcly30-40
+
+The comparision of these two show
+
+    Original text   : 627 characters
+    Level 0	    : 433 characters	reduction 31 %
+    Level 1	    : 345 characters	reduction 45 %	(+14 improvement)
 
 There are few grammar rules which are used to shorten some English
 tokens very much:
@@ -153,7 +170,7 @@ Time is expressed with big letters
 
 Other Big letter acronyms
 
-    phone	  => PH
+    phone	  => P8
 
 =head1 EXAMPLES
 
@@ -189,7 +206,7 @@ conversion function.
     {
 	if ( $condition )
 	{
-	    SqueezeHashSet \%%mySustomWordHash; # Use MY conversions
+	    SqueezeHashSet \%mySustomWordHash;	# Use MY conversions
 	    $myXlat = 1;
 	}
 
@@ -202,19 +219,23 @@ conversion function.
 	print SqueezeText $ARG;
     }
 
-Similarly you can redefine the multi word thanslate table by supplying
-another hash reference in call to SqueezeHashSet(), and to kill more text
+Similarly you can redefine the multi word translate table by supplying
+another hash reference in call to SqueezeHashSet(). To kill more text
 immediately in addtion to default, just concatenate the regexps to
 I<$SQZ_ZAP_REGEXP>
 
 =head1 KNOWN BUGS
 
 There may be lot of false conversions and if you think that some word
-squeezing went too far, please turn on the debug end send the log to the
-maintainer. To see how the conversion goes e.g. for word I<Messages>:
+squeezing went too far, please 1) turn on the debug 2) send you example
+text 3) debug log log to the maintainer. To see how the conversion goes
+e.g. for word I<Messages>:
 
     use English;
     use Lingua::EN:Squeeze;
+
+    #	activate debug when case-insensitive worj "Messages" is found from the
+    #	line.
 
     SqueezeDebug( 1, '(?i)Messages' );
 
@@ -225,28 +246,35 @@ maintainer. To see how the conversion goes e.g. for word I<Messages>:
 =head1 EXPORTABLE VARIABLES
 
 The defaults may not conquer all possible text, so you may wish to
-extend the hash tables and ZAP_REGEXP to include your unique text.
+extend the hash tables and I<$SQZ_ZAP_REGEXP> to cope with your typical text.
 
 =over 4
 
 =head2 $SQZ_ZAP_REGEXP
 
-text to kill immediately, like "Hm, Hi, Hello..." You can only set this
+Text to kill immediately, like "Hm, Hi, Hello..." You can only set this
 once, because this regexp is compiled immediately when C<SqueezeText()> is
-first time called.
+caller for the first time.
+
+=head2 $SQZ_OPTIMIZE_LEVEL
+
+This controls how optimized the text will be. Curretly there is only
+levels 0 (default) and level 1, which squeezes out all spaces. This
+improves compression by average of 10%, but the text is more harder to
+read. If space is tight, use this extended compression optimization.
 
 =head2 %SQZ_WXLATE_MULTI_HASH
 
-I<Multi Word> conversion:  "for you" => "4u" ...
+I<Multi Word> conversion hash table:  "for you" => "4u" ...
 
 =head2 %SQZ_WXLATE_HASH
 
-I<Single Word> conversion hash: word => conversion. This table is applied
-after C<%SQZ_WXLATE_MULTI_HASH>
+I<Single Word> conversion hash table: word => conversion. This table is applied
+after C<%SQZ_WXLATE_MULTI_HASH> has been used.
 
 =head2 %SQZ_WXLATE_EXTRA_HASH
 
-Aggressive I<Single Word> conversions like: without => w/o ...
+Aggressive I<Single Word> conversions like: without => w/o. Applied last.
 
 =back
 
@@ -262,14 +290,16 @@ Aggressive I<Single Word> conversions like: without => w/o ...
 #
 # ***********************************************************************
 
-require 5.003;
+BEGIN { require 5.003 }
 
-use	strict;
+use strict;
 
-use     SelfLoader;
-use	English;
-use	Carp;
+# Somehow doesn't work in Perl 5.004 ?
+# use autouse 'Carp'          => qw( croak carp cluck confess );
 
+use Carp;
+use SelfLoader;
+use English;
 
 BEGIN
 {
@@ -288,15 +318,17 @@ BEGIN
 	$debugRegexp
 
 	$SQZ_ZAP_REGEXP
+	$SQZ_OPTIMIZE_LEVEL
+
 	%SQZ_WXLATE_HASH
 	%SQZ_WXLATE_EXTRA_HASH
 	%SQZ_WXLATE_MULTI_HASH
     );
 
     $FILE_ID =
-	q$Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $;
+	q$Id: Squeeze.pm,v 1.25 1998/12/04 10:00:08 jaalto Exp $;
 
-    #	Here is the real version number, for rcommands like
+    #	Here is the real version number, which you use like this:
     #
     #	    use Squeeze 1.34;
     #
@@ -325,6 +357,8 @@ BEGIN
 	&SqueezeHashSet
 
 	$SQZ_ZAP_REGEXP
+	$SQZ_OPTIMIZE_LEVEL
+
 	%SQZ_WXLATE_HASH
 	%SQZ_WXLATE_EXTRA_HASH
 	%SQZ_WXLATE_MULTI_HASH
@@ -345,7 +379,7 @@ BEGIN
 # **********************************************************************
 
 $debug		= 0;
-$debugRegexp	= '(?i)dummyJummy';
+$debugRegexp	= '(?i)DummyJummy';
 
 $SQZ_ZAP_REGEXP =
 	'\b(a|an|the|shall|hi|hello|cheers|that)\b'
@@ -361,6 +395,7 @@ $SQZ_ZAP_REGEXP =
 
     ;
 
+$SQZ_OPTIMIZE_LEVEL = 0;
 
 # ............................................................ &word ...
 #   A special mnemonic is signified by postfixing it with either
@@ -388,6 +423,7 @@ $SQZ_ZAP_REGEXP =
     , command	    => 'cmd'
     , compact	    => 'cpact'
     , convert	    => 'cnv_'
+    , converted	    => 'cnvd_'
     , conversion    => 'cnv'
     , cooperation   => 'c-o'
     , correct	    => 'corr'
@@ -473,7 +509,7 @@ $SQZ_ZAP_REGEXP =
     , process	    => 'proc'
     , project       => 'prj'
 
-    , recipient	    => 'rcpt'	    # SMTP  :-)
+    , recipient	    => 'rcpt'	    # this is SMTP acronym
     , released	    => 'relsd'
     , reserve	    => 'rsv'
     , register      => 'reg'
@@ -544,7 +580,7 @@ $SQZ_ZAP_REGEXP =
     , 'more'	    => '+/'
     , most	    => '++'
 
-    , phone	    => 'PH'
+    , phone	    => 'P8'
     , please	    => 'pls_'
     , person	    => 'per/'
 
@@ -653,10 +689,11 @@ use vars qw
 %SQZ_WXLATE_MULTI_HASH_MEDIUM = %SQZ_WXLATE_MULTI_HASH;
 %SQZ_WXLATE_MULTI_HASH_MAX    = %SQZ_WXLATE_MULTI_HASH;
 
-%SQZ_WXLATE_HASH_MEDIUM	    = %SQZ_WXLATE_HASH;
-%SQZ_WXLATE_HASH_MAX	    = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
+%SQZ_WXLATE_HASH_MEDIUM	      = %SQZ_WXLATE_HASH;
+%SQZ_WXLATE_HASH_MAX	      = ( %SQZ_WXLATE_HASH, %SQZ_WXLATE_EXTRA_HASH);
 
-
+#   The Active translate tables
+#
 #   User isn't suppose to touch this, but in case you need to know
 #   exactly what traslations are going and what table is in use, then peeek
 #   these.
@@ -707,11 +744,12 @@ $STATE		= "max";		# Squeeze level
 =item Description
 
 Squeeze text by using vowel substitutions and deletions and hash tables
-that guide text substitutions.
+that guide text substitutions. The line is parsed multiple times and
+this will take some time.
 
 =item arg1: $text
 
-Text.
+String. Line of Text.
 
 =item Return values
 
@@ -1006,23 +1044,30 @@ sub SqueezeText ($)
 
     $debug and warn $tab,"[rt]\t[$ARG]" if $orig =~ /$debugRegexp/;
 
+
+    # .................................................... &optimize ...
+
+    if ( $SQZ_OPTIMIZE_LEVEL )
+    {
+	s/\s+(.)/\U$1/g;	# kill empty spaces
+    }
+
+
     $ARG;
 }
 
 
-# This section is automatically upodated by function
-# TinyPerl.el::tiperl-selfstubber-stubs. Do not touch the BEGIN END
-# tokens.
-#
+# This section is automatically updated by function
+# TinyPerl.el::tiperl-selfstubber-stubs. Do not touch the BEGIN END tokens.
+
 # BEGIN: Devel::SelfStubber
 
-sub Squeeze::new ;
+
 sub Squeeze::SqueezeHashSet ($;$);
 sub Squeeze::SqueezeControl (;$);
 sub Squeeze::SqueezeDebug (;$$);
 
 # END: Devel::SelfStubber
-
 
 1;
 __DATA__
@@ -1178,7 +1223,7 @@ sub SqueezeControl (;$)
     my	$id	= "$LIB.SqueezeControl";
 
     $STATE	= shift;
-    $STATE    ||= "max";
+    $STATE	= "max"   if not defined $STATE;
 
     if ( $STATE eq '' or $STATE =~ /^max/i  )
     {
@@ -1257,10 +1302,13 @@ sub SqueezeDebug (;$$)
 
 =head1 AVAILABILITY
 
-Mailto: jari.aalto@poboxes.com HomePage via forwarding service is at
-http://www.netforward.com/poboxes/?jari.aalto or alternatively absolute
-url is at ftp://cs.uta.fi/pub/ssjaaa/ but this may move without notice.
-Prefer keeping the forwarding service link in your bookmark.
+Author can be reached at jari.aalto@poboxes.com HomePage via forwarding
+service is at http://www.netforward.com/poboxes/?jari.aalto or
+alternatively absolute url is at ftp://cs.uta.fi/pub/ssjaaa/ but this may
+move without notice. Prefer keeping the forwarding service link in your
+bookmark.
+
+Latest version of this module can be found at $CPAN/modules/by-module/Lingua/
 
 =head1 AUTHOR
 
