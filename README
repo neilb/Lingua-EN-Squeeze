@@ -1,0 +1,66 @@
+File id
+
+    NAME
+
+        Squeeze.pm - Shorten text to minimum syllables by using hash and vowel
+        deletion rules.
+
+    SYNOPSIS
+
+            use Squeeze.pm;         # imnport only function
+            use Squeeze qw( :ALL ); # function + variables
+            use English;
+
+            while (<>)
+            {
+                print SqueezeText $ARG;
+            }
+
+    DESCRIPTION
+
+        Squeeze text (English) to most compact format possibly so that it
+        is barely readable. You shold convert all text to lowercase for
+        maximum compression, because optimisations have been designed
+        mostly fr unpapitalised letters.
+
+        Warning: Each line is processed multiple times, so prepare for slow
+        conversion time'
+
+        You can use this module eg to preprocess text before it is sent to
+        electronic media that has maximum text size limit. For example
+        Pagers have some arbitrary text size limit, say 200 characters,
+        which you want to fill as much as possible. Alternatively you may
+        have GSM Cellular phone wich is capable of receiving Short Messages
+        (SMS), whose text limit is 160 characters. To your amusement, the
+        description text of this paragraph has been converted below using
+        this library's SqueezeText() function . See yourself if it's
+        readable (Yes, it takes some time to get used to). The compress
+        ratio is typically 30-40%
+
+            u _n use thi mod to prprce txt bfre i_s snt to
+            elrnic mda t_hs max txt siz lim. f_xmple Pag hv
+            som abitry txt siz lim, say 200 chr, W/ u wnt to fll
+            as mch as psbleAlternatvly u may hv GSM Cllar PH wch is
+            cpble of rcivng Short msg (SMS), WS/ txt lim is 160
+            chrTo u/ amsment, dsc txt of thi prgra has
+            ben cnv_ blow usng thi lbrrys SquezText() fnc See
+            uself if i_s redble (Yes, it tak som T to get usdto
+            compr rati is typcly 30-40
+
+How to build this distribution
+
+        You need Perl 5.003 or never. To install this module. Make
+        sure you are in the directory that this README file is in and type:
+
+            perl Makefile.PL        # to build the Makefile
+            make test               # to test the module before installing
+            make install            # to install the module
+
+        After installation, you should be able to "man
+        Lingua::EN::Squeeze" which will get you to usage information for
+        the module. The man page should be placed somewhere like
+        /usr/local/lib/perl5/man/man3/Lingua::EN::Squeeze.3 and if not
+        you should be able to "pod2man Squeeze.pm > Squeeze.3" and
+        then do "man ./Squeeze.3" to view the man page.
+
+End

@@ -1,5 +1,12 @@
 # @(#) Squeez.pm - Perl package to Shorten text to minimum syllables
-# @(#) $Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $
+# @(#) $Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $
+#
+#	This file is maintaned by using Emacs and packages
+#
+#	    tinytab.el	-- 4 tab movement mode
+#	    tinyperl	-- Perl helper mode (pod docs, stubs etc)
+#	    tinybm.el	-- those drawn &TAG lines and breaks you see
+#
 
 package Lingua::EN::Squeeze;
 
@@ -16,9 +23,13 @@ my $LIB = "Lingua::EN::Squeeze";	# For function debug
     #
     #	The REAL version number is defined later
 
-    $VERSION = '1998.0928';
+    $VERSION = '1998.1008';
 
-# ....................................................... &pod-start ...
+# ***********************************************************************
+#
+#   POD HEADER
+#
+# ***********************************************************************
 
 =pod
 
@@ -28,7 +39,7 @@ Squeeze.pm - Shorten text to minimum syllables by using hash and vowel deletion
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $
+$Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $
 
 =head1 SYNOPSIS
 
@@ -243,7 +254,7 @@ Aggressive I<Single Word> conversions like: without => w/o ...
 
 # ......................................................... &pod-end ...
 
-# end of file Squeeze.pm
+
 
 # ******************************************************* &interface ***
 #
@@ -283,7 +294,7 @@ BEGIN
     );
 
     $FILE_ID =
-	q$Id: Squeeze.pm,v 1.21 1998/09/28 16:20:48 jaalto Exp $;
+	q$Id: Squeeze.pm,v 1.24 1998/10/08 14:58:15 jaalto Exp $;
 
     #	Here is the real version number, for rcommands like
     #
@@ -304,20 +315,20 @@ BEGIN
 
     @EXPORT      = qw
     (
-	SqueezeText
-	SqueezeControl
-	SqueezeDebug
+	&SqueezeText
+	&SqueezeControl
+	&SqueezeDebug
     );
 
     @EXPORT_OK   = qw
     (
-	SqueezeHashSet
+	&SqueezeHashSet
+
 	$SQZ_ZAP_REGEXP
 	%SQZ_WXLATE_HASH
 	%SQZ_WXLATE_EXTRA_HASH
 	%SQZ_WXLATE_MULTI_HASH
     );
-
 
     %EXPORT_TAGS =
     (
@@ -361,6 +372,7 @@ $SQZ_ZAP_REGEXP =
 %SQZ_WXLATE_HASH =
 (
       above	    => 'abve'
+    , address	    => 'addr'
     , adjust	    => 'adj'
     , adjusted	    => 'ajusd'
     , adjustable    => 'ajutbl'
@@ -384,6 +396,7 @@ $SQZ_ZAP_REGEXP =
 
     , database      => 'db'
     , day           => 'DD'
+    , date	    => 'DD'
     , definition    => 'defn'
     , description   => 'desc'
     , different	    => 'dif'
@@ -419,6 +432,7 @@ $SQZ_ZAP_REGEXP =
     , himself       => 'hself'
     , hour	    => 'HH'
 
+    , identifier    => 'id'
     , information   => 'inf'
     , inform	    => 'ifrm'
     , increase	    => 'inc'
@@ -459,12 +473,16 @@ $SQZ_ZAP_REGEXP =
     , process	    => 'proc'
     , project       => 'prj'
 
+    , recipient	    => 'rcpt'	    # SMTP  :-)
     , released	    => 'relsd'
     , reserve	    => 'rsv'
     , register      => 'reg'
     , resource      => 'rc'
+    , return	    => 'ret'
+    , returned	    => 'ret'
     , 'require'	    => 'rq'
 
+    , subject	    => 'sbj'
     , soconds	    => 'SEC'
     , service       => 'srv'
     , squeeze	    => 'sqz'
@@ -558,7 +576,7 @@ $SQZ_ZAP_REGEXP =
 
     , 'for example' => 'f_xmple'
 
-    , 'with or without' => 'w/out'
+    , 'with or without' => 'w/o'
 
 
     , 'it is'	    => 'i_s'
@@ -579,6 +597,9 @@ $SQZ_ZAP_REGEXP =
     , 'which are'	=> 'w_r'
     , 'which are not'   => 'w_rt'
     , "which aren't"	=> 'w_rt'
+
+    , "has not"		=> 'hs_t'
+    , "have not"	=> 'hv_t'
 
     , "that has"	=> 't_hs'
     , "that has not"	=> 't_hst'
@@ -989,6 +1010,21 @@ sub SqueezeText ($)
 }
 
 
+# This section is automatically upodated by function
+# TinyPerl.el::tiperl-selfstubber-stubs. Do not touch the BEGIN END
+# tokens.
+#
+# BEGIN: Devel::SelfStubber
+
+sub Squeeze::new ;
+sub Squeeze::SqueezeHashSet ($;$);
+sub Squeeze::SqueezeControl (;$);
+sub Squeeze::SqueezeDebug (;$$);
+
+# END: Devel::SelfStubber
+
+
+1;
 __DATA__
 
 #  -- A U T O L O A D  -- A U T O L O A D  -- A U T O L O A D  --
@@ -998,7 +1034,7 @@ __DATA__
 #
 #   PUBLIC FUNCTION
 #
-# *********************************************************************
+# **********************************************************************
 
 =pod
 
@@ -1144,16 +1180,16 @@ sub SqueezeControl (;$)
     $STATE	= shift;
     $STATE    ||= "max";
 
-    if ( $STATE eq '' or $STATE eq 'max'  )
+    if ( $STATE eq '' or $STATE =~ /^max/i  )
     {
 	SqueezeHashSet "reset", "reset";
     }
-    elsif ( $STATE eq 'med' )
+    elsif ( $STATE =~ /^med/i )
     {
 	SqueezeHashSet	\%SQZ_WXLATE_HASH_MEDIUM ,
 			\%SQZ_WXLATE_MULTI_HASH_MEDIUM;
     }
-    elsif ( $STATE eq 'conv' or $STATE eq 'noconv' or $STATE eq 'max' )
+    elsif ( $STATE =~ /^(conv|noconv|max)/i )
     {
 	# do nothing
     }
@@ -1181,7 +1217,7 @@ sub SqueezeControl (;$)
 
 Activate or deactivate debug.
 
-=item arg1: $STATE [optional]
+=item arg1: $state [optional]
 
 If not given, turn debug off. If non-zero, turn debug on.
 You must also supply C<regexp> if you turn on debug, unless you have
@@ -1202,13 +1238,10 @@ None.
 sub SqueezeDebug (;$$)
 {
     my	$id = "$LIB.SqueezeDebug";
-    my ( $STATE, $regexp ) = @ARG;
+    my ( $state, $regexp ) = @ARG;
 
-    $debug  = $STATE;
+    $debug  = $state;
     defined $regexp and $debugRegexp = $regexp;
-
-
-# die "$STATE,$regexp,$debugRegexp";
 }
 
 # **********************************************************************
@@ -1237,5 +1270,6 @@ terms as Perl itself or in terms of Gnu General Public licence v2 or later.
 
 =cut
 
-1;
 __END__
+
+# end of file Squeeze.pm
