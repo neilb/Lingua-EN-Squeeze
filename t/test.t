@@ -15,7 +15,7 @@ use Test::More tests => 7;
 $OUTPUT_AUTOFLUSH = 1;
 
 my $str =
-    "This is piece of text to demonstrate the Squeezing algorhithm " 
+    "This is piece of text to demonstrate the Squeezing algorhithm "
     . "which is based on text matches and vowel deletion rules. The "
     . "performance of the module is not impressive, because each line "
     . "is treated several times with various test.\n"
@@ -70,7 +70,10 @@ my $levelString =
     $ARG =  SqueezeText($str);
 
     # print "KEYS >>", join ' ', keys %Lingua::EN::Squeeze::wordXlate, "\n\n";
-    my $ratio = sprintf "%0.2f%",  1 - length($ARG)/length $str;
+
+    my $lenA = length $ARG;
+    my $lenB = length $str;
+    my $ratio = sprintf("%0.2f",  1 - $lenA/$lenB);
 
     ok( m!w/! , "SqueezeControl(max) with ratio $ratio");
 

@@ -70,4 +70,23 @@ Short description of Lingua::EN::Squeeze.pm module
             SeeUselfIfI_sRedble(Yes,ItTakSomTToGetUsdto
             comprRatIsTpcly30-40
 
+NOTES:
+
+        If you see following error during running test, please note,
+        that these are not coming from Squeeze.pm or from 't/test.t'. You
+        can verify this by running tests manually with 'perl t/test.t'.
+
+            foo@host$ perl *.PL
+            foo@host$ make test
+            PERL_DL_NONLAZY=1 /usr/bin/perl "-MExtUtils::Command::MM" "-e" "test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+            t/test....Use of uninitialized value in concatenation (.) or string at (eval 9) line 3.
+            Use of uninitialized value in concatenation (.) or string at (eval 10) line 3.
+            Use of uninitialized value in concatenation (.) or string at (eval 10) line 3.
+            Use of uninitialized value in concatenation (.) or string at (eval 9) line 3.
+            t/test....ok 1/7Invalid conversion in sprintf: end of string at t/test.t line 62.
+            Use of uninitialized value in concatenation (.) or string at (eval 10) line 3.
+            Use of uninitialized value in concatenation (.) or string at (eval 9) line 3.
+            t/test....ok
+            All tests successful.
+
 End

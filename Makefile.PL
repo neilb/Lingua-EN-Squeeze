@@ -1,5 +1,3 @@
-use ExtUtils::MakeMaker;
-
 # Steps to make CPAN package:
 #
 # 1. Modify this file as needed
@@ -19,7 +17,7 @@ use ExtUtils::MakeMaker;
 #
 #   $ make distdir distcheck dist
 
-use ExtUtils::MakeMaker 6.25;   # 2005-02-15
+use ExtUtils::MakeMaker;
 
 $MODULE    = 'Lingua::EN::Squeeze';
 

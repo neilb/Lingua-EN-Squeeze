@@ -1,5 +1,5 @@
 # Squeez.pm - Perl package to shorten text to minimum syllables
-# $Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $
+# $Id: Squeeze.pm,v 1.8 2005-12-05 09:02:49 jaalto Exp $
 #
 # This file is maintaned by using Emacs (The Editor) and add-on
 # packages. See http://tiny-tools.sourceforge.net/
@@ -24,7 +24,7 @@ package Lingua::EN::Squeeze;
     #   The following variable is updated by Emacs setup tinyperl.el
     #   whenever this file is saved
 
-    $VERSION = '2005.0216';
+    $VERSION = '2006.0704';
 
 # ***********************************************************************
 #
@@ -40,7 +40,7 @@ Squeeze.pm - Shorten text to minimum syllables by using hash table lookup and vo
 
 =head1 REVISION
 
-$Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $
+$Id: Squeeze.pm,v 1.8 2005-12-05 09:02:49 jaalto Exp $
 
 =head1 SYNOPSIS
 
@@ -327,7 +327,7 @@ BEGIN
     );
 
     $FILE_ID =
-        q$Id: Squeeze.pm,v 1.7 2005/02/16 09:34:07 jaalto Exp $;
+        q$Id: Squeeze.pm,v 1.8 2005-12-05 09:02:49 jaalto Exp $;
 
     #   Here woudl be the real version number, which you use like this:
     #
@@ -417,7 +417,7 @@ $SQZ_OPTIMIZE_LEVEL = 0;
     , arbitrary     => 'abitry'
     , argument      => 'arg'
 
-    , backgreound   => 'bg'
+    , background    => 'bg'
     , below         => 'blow'
 
     , change        => 'chg'
