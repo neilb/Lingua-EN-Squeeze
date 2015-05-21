@@ -13,18 +13,15 @@
 
 package Lingua::EN::Squeeze;
 
-    my $LIB = "Lingua::EN::Squeeze";        # For debug printing
+use Scalar::Util qw/ reftype /;
 
-    use vars qw ( $VERSION );
+use 5.006;
+use strict;
+use warnings;
 
-    #   This is for use of Makefile.PL and ExtUtils::MakeMaker
-    #   So that it puts the tardist number in format YYYY.MMDD
-    #   The REAL version number is defined later
+my $LIB = "Lingua::EN::Squeeze";        # For debug printing
 
-    #   The following variable is updated by Emacs setup tinyperl.el
-    #   whenever this file is saved
-
-    $VERSION = '2006.0704';
+our $VERSION = '2015.01';
 
 # ***********************************************************************
 #
@@ -37,10 +34,6 @@ package Lingua::EN::Squeeze;
 =head1 NAME
 
 Squeeze.pm - Shorten text to minimum syllables by using hash table lookup and vowel deletion
-
-=head1 REVISION
-
-$Id: Squeeze.pm,v 1.8 2005-12-05 09:02:49 jaalto Exp $
 
 =head1 SYNOPSIS
 
@@ -63,6 +56,10 @@ $Id: Squeeze.pm,v 1.8 2005-12-05 09:02:49 jaalto Exp $
         print "Original: $ARG\n";
         print "Squeezed: ", $squeeze->SqueezeText(lc $ARG);
     }
+
+=head1 VERSION
+
+This document describes version 2015.01
 
 =head1 DESCRIPTION
 
@@ -291,9 +288,6 @@ Aggressive I<Single Word> conversions like: without => w/o are applied last.
 #   MODULE INTERFACE
 #
 # ***********************************************************************
-
-use 5.003;
-use strict;
 
 # Somehow doesn't work in Perl 5.004 ?
 # use autouse 'Carp' => qw( croak carp cluck confess );
@@ -1195,7 +1189,7 @@ sub SqueezeHashSet ($;$)
     {
         %wordXlate  = %SQZ_WXLATE_HASH_MAX;
     }
-    elsif ( defined %$wordHashRef )
+    elsif ( ref($wordHashRef) && reftype($wordHashRef) eq 'HASH' )
     {
         %wordXlate  = %$wordHashRef;
     }
@@ -1211,7 +1205,7 @@ sub SqueezeHashSet ($;$)
         {
             %multiWordXlate = %SQZ_WXLATE_MULTI_HASH;
         }
-        elsif ( defined %$multiHashRef )
+        elsif ( ref($multiHashRef) && reftype($multiHashRef) eq 'HASH' )
         {
             %multiWordXlate = %$multiHashRef;
         }

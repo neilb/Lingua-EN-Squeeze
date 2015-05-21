@@ -1,9 +1,0 @@
----
-name: Lingua-EN-Squeeze
-version: 2005.0216
-license: gpl
-distribution_type: module
-requires:
-  Test::More: 0
-installdirs: site
-generated_by: Lingua-EN-Squeeze version 2005.0216 (Makefile.PL)

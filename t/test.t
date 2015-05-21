@@ -1,11 +1,7 @@
-#!/usr/bin/perl
+#! perl
 #
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.t'
-
-use lib "../blib";
-use lib "../blib/lib";
-use lib "blib/lib";
 
 use strict;
 use English;
