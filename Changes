@@ -1,3 +1,8 @@
+Revision history for Perl module Lingua::EN::Squeeze
+
+2015.01 2015-05-21 NEILB
+    - Renamed ChangeLog to Changes
+
 2006-07-04  Jari Aalto  <jaalto A T cante>
 
 	* README (NOTES): Added new heading to epxlain why running
