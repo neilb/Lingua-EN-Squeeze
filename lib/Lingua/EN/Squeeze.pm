@@ -1333,9 +1333,18 @@ Latest version of this module can be found at CPAN/modules/by-module/Lingua/
 
 =head1 AUTHOR
 
-Copyright (C) 1998-2005  Jari Aalto
-free software; you can redistribute it and/or modify it under the
-terms of Gnu General Public licence v2 or later.
+Jari Aalto E<lt>jariaalto@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 1998-2016 by Jari Aalto.
+
+This is free software, licensed under:
+
+  The GNU General Public License, Version 2, June 1991
+
+You can redistribute it and/or modify it under the
+terms of GNU General Public License v2 or later.
 
 =cut
 

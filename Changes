@@ -2,6 +2,9 @@ Revision history for Perl module Lingua::EN::Squeeze
 
 2016.01 2016-01-21 NEILB
     - Fixed the abstract line and the SYNOPSIS
+    - Changed doc to have a COPYRIGHT AND LICENSE section, with the
+      expected text for GPL v2 (which is what the doc already said).
+    - Fixed dist.ini so dist metadata will say the license is GPL v2.
 
 2015.01 2015-06-01 NEILB
     - Renamed ChangeLog to Changes
