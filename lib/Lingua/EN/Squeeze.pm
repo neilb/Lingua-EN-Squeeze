@@ -33,43 +33,43 @@ our $VERSION = '2015.01';
 
 =head1 NAME
 
-Squeeze.pm - Shorten text to minimum syllables by using hash table lookup and vowel deletion
+Lingua::EN::Squeeze - Shorten text to minimum syllables using hash table lookup and vowel deletion
 
 =head1 SYNOPSIS
 
-    use Squeeze.pm;         # import only function
-    use Squeeze qw( :ALL ); # import all functions and variables
-    use English;            # to use readable variable names
+    use Lingua::EN::Squeeze;              # import only function
+    use Lingua::EN::Squeeze qw( :ALL );   # import all functions and variables
+    use English;                          # to use readable variable names
 
-    while (<>)
-    {
-        print "Original: $ARG\n";
-        print "Squeezed: ", SqueezeText lc $ARG;
+    while (<>) {
+        print "Original: $_\n";
+        print "Squeezed: ", SqueezeText(lc $_), "\n";
     }
 
     #  Or you can use object oriented interface
 
-    $squeeze = new Lingua::EN::Squeeze;
+    $squeeze = Lingua::EN::Squeeze->new();
 
-    while (<>)
-    {
-        print "Original: $ARG\n";
-        print "Squeezed: ", $squeeze->SqueezeText(lc $ARG);
+    while (<>) {
+        print "Original: $_\n";
+        print "Squeezed: ", $squeeze->SqueezeText(lc $_);
     }
 
 =head1 VERSION
 
-This document describes version 2015.01
+This document describes version 2016.01
 
 =head1 DESCRIPTION
 
-Squeeze english text to most compact format possible so that it is barely
-readable. Be sure to convert all text to lowercase before using the
-SqueezeText() for maximum compression, because optimizations have been
-designed mostly for uncapitalized letters.
+This module squeezes English text to the most compact format possible,
+so that it is barely readable.
+Be sure to convert all text to lowercase before using the
+SqueezeText() for maximum compression,
+because optimizations have been
+designed mostly for lower case letters.
 
-C<Warning: Each line is processed multiple times, so prepare for slow
-conversion time>
+B<Warning>:
+Each line is processed multiple times, so prepare for slow conversion time
 
 You can use this module e.g. to preprocess text before it is sent to
 electronic media that has some maximum text size limit. For example pagers

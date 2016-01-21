@@ -1,5 +1,8 @@
 Revision history for Perl module Lingua::EN::Squeeze
 
+2016.01 2016-01-21 NEILB
+    - Fixed the abstract line and the SYNOPSIS
+
 2015.01 2015-06-01 NEILB
     - Renamed ChangeLog to Changes
     - Switched to Dist::Zilla, in the process moving Squeeze.pm to lib/...
