@@ -1326,6 +1326,30 @@ sub SqueezeDebug (;$$)
 
 =pod
 
+=head1 SEE ALSO
+
+The following modules may also be of interested.
+I haven't tested them,
+unless noted.
+
+=over 4
+
+=item
+
+L<Lingua::EN::Contraction> will contract English phrases,
+converting "I am" to "I'm", and suchlike.
+
+=item
+
+L<Lingua::EN::Fathom> measures the readability of English text.
+
+=item
+
+L<Lingua::Stem> can stem text in a range of natural languages,
+including English.
+
+=back
+
 =head1 AVAILABILITY
 
 Latest version of this module can be found at CPAN/modules/by-module/Lingua/
