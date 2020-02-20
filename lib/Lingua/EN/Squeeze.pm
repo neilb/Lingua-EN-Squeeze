@@ -54,10 +54,6 @@ Lingua::EN::Squeeze - Shorten text to minimum syllables using hash table lookup 
         print "Squeezed: ", $squeeze->SqueezeText(lc $_);
     }
 
-=head1 VERSION
-
-This document describes version 2016.01
-
 =head1 DESCRIPTION
 
 This module squeezes English text to the most compact format possible,
