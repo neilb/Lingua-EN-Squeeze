@@ -21,7 +21,6 @@ use warnings;
 
 my $LIB = "Lingua::EN::Squeeze";        # For debug printing
 
-our $VERSION = '2015.01';
 
 # ***********************************************************************
 #
